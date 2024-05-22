@@ -1,12 +1,13 @@
 package com.example.BalisongFlipping.modals.accounts;
 
+import com.example.BalisongFlipping.modals.accounts.tokens.Token;
+import com.example.BalisongFlipping.modals.posts.Post;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection="Accounts")
-public abstract class Account {
+public class Account {
 
     public enum Role {
         USER,
@@ -30,10 +31,14 @@ public abstract class Account {
     @Indexed(unique = true)
     private String email;
 
+    private Token token;
+
     private String password;
     private Date accountCreationDate;
     private Date lastLogin;
     private Role role;
+
+    private List<Post> posts;
 
     public Account(String email, String password, Date accountCreationDate, Date lastLogin, Role role) {
         this.email = email;
@@ -41,10 +46,6 @@ public abstract class Account {
         this.accountCreationDate = accountCreationDate;
         this.lastLogin = lastLogin;
         this.role = role;
+        this.posts = new ArrayList<Post>();
     }
-
-    // methods
-
-    // abstract methods
-    public abstract String getAccountType();
 }

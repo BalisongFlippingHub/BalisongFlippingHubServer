@@ -1,13 +1,16 @@
 package com.example.BalisongFlipping.modals.knives;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.Date;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Knife {
     public enum BladeMaterial {
         S35VN,
@@ -89,8 +92,12 @@ public class Knife {
     }
 
     // members
+    @Id
     private String uuid;
+
+    @Indexed(unique = true)
     private String name;
+
     private String summary;
     private double weight;
     private double overallLength;
@@ -106,60 +113,5 @@ public class Knife {
     private KnifeHardware hardware;
     private PinSystem pinSystem;
 
-    private Knife() {
-        setUuid("");
-        setName("");
-        setSummary("");
-        setWeight(0.0);
-        setOverallLength(0.0);
-        setBladeLength(0.0);
-        setHandleLength(0.0);
-        setBladeMaterial(BladeMaterial.UNKNOWN);
-        setBladeFinish(BladeFinish.UNKNOWN);
-        setBladeShape(BladeShape.OTHER);
-        setBladeType(BladeType.OTHER);
-        setHandleFinish(HandleFinish.UNKNOWN);
-        setHandleMaterial(HandleMaterial.UNKNOWN);
-        setHandleConstruction(HandleConstruction.UNKNOWN);
-        setHardware(KnifeHardware.OTHER);
-        setPinSystem(PinSystem.OTHER);
-    }
 
-    public Knife(String uuid, String name) {
-        setUuid(uuid);
-        setName(name);
-        setSummary("");
-        setWeight(0.0);
-        setOverallLength(0.0);
-        setBladeLength(0.0);
-        setHandleLength(0.0);
-        setBladeMaterial(BladeMaterial.UNKNOWN);
-        setBladeFinish(BladeFinish.UNKNOWN);
-        setBladeShape(BladeShape.OTHER);
-        setBladeType(BladeType.OTHER);
-        setHandleFinish(HandleFinish.UNKNOWN);
-        setHandleMaterial(HandleMaterial.UNKNOWN);
-        setHandleConstruction(HandleConstruction.UNKNOWN);
-        setHardware(KnifeHardware.OTHER);
-        setPinSystem(PinSystem.OTHER);
-    }
-
-    public Knife(String uuid, String name, String summary, double weight, double overallLength, double bladeLength, double handleLength,  BladeMaterial bladeMaterial, BladeFinish bladeFinish, BladeShape bladeShape, BladeType bladeType, HandleFinish handleFinish, HandleMaterial handleMaterial, HandleConstruction handleConstruction, KnifeHardware hardware, PinSystem pinSystem) {
-        setUuid(uuid);
-        setName(name);
-        setSummary(summary);
-        setWeight(weight);
-        setOverallLength(overallLength);
-        setBladeLength(bladeLength);
-        setHandleLength(handleLength);
-        setBladeMaterial(bladeMaterial);
-        setBladeFinish(bladeFinish);
-        setBladeShape(bladeShape);
-        setBladeType(bladeType);
-        setHandleFinish(handleFinish);
-        setHandleMaterial(handleMaterial);
-        setHandleConstruction(handleConstruction);
-        setHardware(hardware);
-        setPinSystem(pinSystem);
-    }
 }

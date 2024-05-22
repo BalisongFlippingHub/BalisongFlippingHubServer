@@ -23,9 +23,4 @@ public class User extends Account {
         this.displayName = displayName;
         this.ownedKnives = new ArrayList<OwnedKnife>();
     }
-
-    @Override
-    public String getAccountType() {
-        return "User";
-    }
 }

@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
+import java.util.List;
 
 
 @Setter
@@ -27,13 +26,7 @@ public class Maker extends Account{
     // members
     private String companyName;
     private double companyDuration;
-    private ArrayList<String> products;
-    private ArrayList<Services> services;
-    private ArrayList<String> links;
-
-    // abstract methods
-    @Override
-    public String getAccountType() {
-        return "Maker";
-    }
+    private List<String> products;
+    private List<Services> services;
+    private List<String> links;
 }
