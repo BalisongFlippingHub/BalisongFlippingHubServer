@@ -1,12 +1,10 @@
 package com.example.BalisongFlipping.modals.accounts;
 
-import com.fasterxml.jackson.databind.annotation.EnumNaming;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 
 import java.util.Collection;
 import java.util.Date;
@@ -14,8 +12,10 @@ import java.util.List;
 
 @Getter
 @Setter
-@Data
-public abstract class Account implements UserDetails {
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(collection="Accounts")
+public abstract class Account {
 
     public enum Role {
         USER,
@@ -24,64 +24,27 @@ public abstract class Account implements UserDetails {
     }
 
     // members
+    @Id
     private String uuid;
+
+    @Indexed(unique = true)
     private String email;
+
     private String password;
     private Date accountCreationDate;
     private Date lastLogin;
-
     private Role role;
 
-    // private constructors
-    private Account() {
-        setUuid("");
-        setEmail("");
-        setPassword("");
-        setAccountCreationDate(null);
-        setLastLogin(null);
-    }
-
-    // public constructors
-    public Account(String uuid, String email, String password, Date accountCreationDate, Date lastLogin) {
-        setUuid(uuid);
-        setEmail(email);
-        setPassword(password);
-        setAccountCreationDate(accountCreationDate);
-        setLastLogin(lastLogin);
+    public Account(String email, String password, Date accountCreationDate, Date lastLogin, Role role) {
+        this.email = email;
+        this.password = password;
+        this.accountCreationDate = accountCreationDate;
+        this.lastLogin = lastLogin;
+        this.role = role;
     }
 
     // methods
 
     // abstract methods
     public abstract String getAccountType();
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

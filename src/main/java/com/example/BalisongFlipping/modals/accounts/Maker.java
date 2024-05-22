@@ -1,17 +1,18 @@
 package com.example.BalisongFlipping.modals.accounts;
 
 import com.example.BalisongFlipping.modals.knives.MakersKnife;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+
 
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Maker extends Account{
 
     enum Services {
@@ -26,15 +27,9 @@ public class Maker extends Account{
     // members
     private String companyName;
     private double companyDuration;
-    private ArrayList<MakersKnife> products;
+    private ArrayList<String> products;
     private ArrayList<Services> services;
     private ArrayList<String> links;
-
-    // public constructors
-    public Maker(String uuid, String email, String password, Date accountCreationDate, Date lastLogin, Role role) {
-        super(uuid, email, password, accountCreationDate, lastLogin);
-        setRole(Role.MAKER);
-    }
 
     // abstract methods
     @Override
