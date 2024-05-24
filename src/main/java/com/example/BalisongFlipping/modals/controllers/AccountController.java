@@ -18,11 +18,16 @@ public class AccountController {
 
     @GetMapping("/accounts")
     public ResponseEntity<?> getAllAccounts() {
-        List<Account> accounts = accountRepository.findAll();
-        if (!accounts.isEmpty()) {
-            return new ResponseEntity<List<Account>>(accounts, HttpStatus.OK);
-        }
+        try {
+            List<Account> accounts = accountRepository.findAll();
+            if (!accounts.isEmpty()) {
+                return new ResponseEntity<List<Account>>(accounts, HttpStatus.OK);
+            }
 
-        return new ResponseEntity<>("No accounts available", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("No accounts available", HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>("Couldn't access the DB", HttpStatus.NOT_FOUND);
+        }
     }
 }
