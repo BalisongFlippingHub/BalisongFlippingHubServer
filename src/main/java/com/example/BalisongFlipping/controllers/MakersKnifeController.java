@@ -1,9 +1,7 @@
-package com.example.BalisongFlipping.modals.controllers;
+package com.example.BalisongFlipping.controllers;
 
-import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.modals.knives.MakersKnife;
-import com.example.BalisongFlipping.modals.repositories.MakersKnifeRepository;
-import lombok.Getter;
+import com.example.BalisongFlipping.repositories.MakersKnifeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

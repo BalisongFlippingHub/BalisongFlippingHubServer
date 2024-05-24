@@ -1,13 +1,15 @@
 package com.example.BalisongFlipping.modals.accounts;
 
-import com.example.BalisongFlipping.modals.accounts.tokens.Token;
 import com.example.BalisongFlipping.modals.posts.Post;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection="Accounts")
-public class Account {
+public class Account implements UserDetails {
 
     public enum Role {
         USER,
@@ -30,8 +32,6 @@ public class Account {
 
     @Indexed(unique = true)
     private String email;
-
-    private Token token;
 
     private String password;
     private Date accountCreationDate;
@@ -47,5 +47,40 @@ public class Account {
         this.lastLogin = lastLogin;
         this.role = role;
         this.posts = new ArrayList<Post>();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
