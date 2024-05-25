@@ -18,7 +18,7 @@ public class AccountService {
     public List<Account> allUsers() {
         List<Account> accounts = new ArrayList<>();
 
-        accountRepository.findAll();
+        accounts = accountRepository.findAll();
 
         return accounts;
     }

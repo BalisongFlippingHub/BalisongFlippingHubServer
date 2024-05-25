@@ -7,4 +7,8 @@ import lombok.Setter;
 @Setter
 public class Admin extends Account{
 
+    public Admin(Account currentAccount) {
+        super(currentAccount);
+
+    }
 }

@@ -7,6 +7,7 @@ import com.example.BalisongFlipping.services.AuthService;
 import com.example.BalisongFlipping.services.JwtService;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +26,33 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<Account> register(@RequestBody RegisterAccountDto registerUserDto) {
+    /**
+     *
+     * @param registerUserDto
+     * @return
+     *
+     * POST ENDPOINT
+     * - Takes in a body of params to register a new user. Check RegisterAccountDto for details
+     * - Calls Auth Service to attempt to store new user in DB
+     * - todo -- Implement defensive programming that checks incoming body for correct data
+     */
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterAccountDto registerUserDto) {
+        System.out.println("Calling Post API auth/signup...");
         Account registeredUser = authenticationService.signup(registerUserDto);
 
         return ResponseEntity.ok(registeredUser);
     }
 
+    /**
+     *
+     * @param loginUserDto
+     * @return
+     *
+     * POST ENDPOINT
+     * - Takes in a body of params to check for an authenticated user.
+     * - Translation... attempts to log in a user by checking user credentials and jwt passed
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto) {
         Account authenticatedUser = authenticationService.authenticate(loginUserDto);

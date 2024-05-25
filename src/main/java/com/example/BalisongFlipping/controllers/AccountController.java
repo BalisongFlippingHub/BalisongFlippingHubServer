@@ -1,6 +1,13 @@
 package com.example.BalisongFlipping.controllers;
 
+import com.example.BalisongFlipping.dtos.AccountDto;
+import com.example.BalisongFlipping.dtos.AdminDto;
+import com.example.BalisongFlipping.dtos.MakerDto;
+import com.example.BalisongFlipping.dtos.UserDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
+import com.example.BalisongFlipping.modals.accounts.Admin;
+import com.example.BalisongFlipping.modals.accounts.Maker;
+import com.example.BalisongFlipping.modals.accounts.User;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.example.BalisongFlipping.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +32,52 @@ public class AccountController {
    }
 
    @GetMapping("/me")
-    public ResponseEntity<Account> authenticatedUser() {
+    public ResponseEntity<?> authenticatedUser() {
        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
        Account currentAccount = (Account) authentication.getPrincipal();
+       AccountDto accountDto;
+       if (currentAccount.getRole() == Account.Role.ADMIN) {
+           Admin adminAccount = new Admin(currentAccount);
 
-       return ResponseEntity.ok(currentAccount);
+           accountDto = new AdminDto(
+                   adminAccount.getUuid(),
+                   adminAccount.getEmail(),
+                   adminAccount.getAccountCreationDate(),
+                   adminAccount.getLastLogin(),
+                   adminAccount.getRole(),
+                   adminAccount.getPosts()
+           );
+       }
+       else if (currentAccount.getRole() == Account.Role.MAKER) {
+            Maker makerAccount = new Maker(currentAccount);
+
+            accountDto = new MakerDto(
+                    makerAccount.getUuid(),
+                    makerAccount.getEmail(),
+                    makerAccount.getCompanyName(),
+                    makerAccount.getCompanyDuration(),
+                    makerAccount.getAccountCreationDate(),
+                    makerAccount.getLastLogin(),
+                    makerAccount.getRole(),
+                    makerAccount.getPosts()
+            );
+       }
+       else {
+            User userAccount = new User(currentAccount);
+
+            accountDto = new UserDto(
+                    userAccount.getUuid(),
+                    userAccount.getEmail(),
+                    userAccount.getDisplayName(),
+                    userAccount.getAccountCreationDate(),
+                    userAccount.getLastLogin(),
+                    userAccount.getRole(),
+                    userAccount.getPosts()
+            );
+       }
+
+       return ResponseEntity.ok(accountDto);
    }
 
    @GetMapping("/")

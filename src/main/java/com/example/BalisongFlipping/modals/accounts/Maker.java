@@ -29,4 +29,9 @@ public class Maker extends Account{
     private List<String> products;
     private List<Services> services;
     private List<String> links;
+
+    public Maker(Account account) {
+        super(account);
+
+    }
 }

@@ -32,8 +32,7 @@ public class SecurityFilterConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> {
             try {
-                csrf
-                        .disable();
+                csrf.disable();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -42,8 +41,6 @@ public class SecurityFilterConfig {
         http.authorizeHttpRequests((auth) -> {
             auth
                     .requestMatchers("/auth/**")
-                    .permitAll()
-                    .requestMatchers("/tutorials")
                     .permitAll()
                     .anyRequest()
                     .authenticated();
@@ -74,14 +71,3 @@ public class SecurityFilterConfig {
     }
 }
 
-//@EnableWebSecurity
-//@Configuration
-//public class SecurityFilterConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests(auth -> auth.requestMatchers("tutorials").permitAll());  // permit all doesn't require authentication
-//        http.authorizeHttpRequests(auth -> auth.requestMatchers("accounts").authenticated()); // authenicated requires authentication
-//        return http.build();
-//    }
-//}

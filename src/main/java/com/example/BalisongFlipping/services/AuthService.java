@@ -12,6 +12,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 @Service
 public class AuthService {
     private final AccountRepository accountRepository;
@@ -31,25 +34,32 @@ public class AuthService {
     }
 
     public Account signup(RegisterAccountDto input) {
-        switch (input.getRole()) {
-            case ADMIN  -> {
-                Admin admin = new Admin();
-                admin.setEmail(input.getEmail());
-                admin.setPassword(passwordEncoder.encode(input.getPassword()));
-                return accountRepository.save(admin);
-            }
-            case MAKER -> {
-                Maker maker = new Maker();
-                maker.setEmail(input.getEmail());
-                maker.setPassword(passwordEncoder.encode(input.getPassword()));
-                return accountRepository.save(maker);
-            }
-            default -> {
-                User user = new User();
-                user.setEmail(input.getEmail());
-                user.setPassword(passwordEncoder.encode(input.getPassword()));
-                return accountRepository.save(user);
-            }
+        if (input.getRole() == Account.Role.MAKER) {
+            Maker maker = new Maker();
+            maker.setEmail(input.getEmail());
+            maker.setPassword(passwordEncoder.encode(input.getPassword()));
+            maker.setRole(input.getRole());
+            maker.setAccountCreationDate(new Date());
+            maker.setLastLogin(new Date());
+            maker.setCompanyName("");
+            maker.setCompanyDuration(0.0);
+            maker.setPosts(new ArrayList<>());
+            maker.setServices(new ArrayList<>());
+            maker.setProducts(new ArrayList<>());
+            maker.setLinks(new ArrayList<>());
+            return accountRepository.save(maker);
+        }
+        else {
+            User user = new User();
+            user.setEmail(input.getEmail());
+            user.setPassword(passwordEncoder.encode(input.getPassword()));
+            user.setRole(input.getRole());
+            user.setAccountCreationDate(new Date());
+            user.setLastLogin(new Date());
+            user.setDisplayName("");
+            user.setPosts(new ArrayList<>());
+            user.setOwnedKnives(new ArrayList<>());
+            return accountRepository.save(user);
         }
     }
 

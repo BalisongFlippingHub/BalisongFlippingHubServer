@@ -18,9 +18,8 @@ public class User extends Account {
     private String displayName;
     private List<OwnedKnife> ownedKnives;
 
-    public User(String email, String displayName, String password, Date accountCreationDate, Date lastLogin, Role role) {
-        super(email, password, accountCreationDate, lastLogin, role);
-        this.displayName = displayName;
-        this.ownedKnives = new ArrayList<OwnedKnife>();
+    public User(Account account) {
+        super(account);
+
     }
 }

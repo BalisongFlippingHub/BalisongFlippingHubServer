@@ -49,6 +49,16 @@ public class Account implements UserDetails {
         this.posts = new ArrayList<Post>();
     }
 
+    public Account(Account account) {
+        this.uuid = account.getUuid();
+        this.email = account.getEmail();
+        this.password = account.getPassword();
+        this.accountCreationDate = account.getAccountCreationDate();
+        this.lastLogin = account.lastLogin;
+        this.role = account.getRole();
+        this.posts = account.getPosts();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
