@@ -7,7 +7,6 @@ import com.example.BalisongFlipping.services.AuthService;
 import com.example.BalisongFlipping.services.JwtService;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

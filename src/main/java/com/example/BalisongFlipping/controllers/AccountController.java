@@ -33,51 +33,14 @@ public class AccountController {
 
    @GetMapping("/me")
     public ResponseEntity<?> authenticatedUser() {
-       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+       AccountDto account = accountService.getSelf();
 
-       Account currentAccount = (Account) authentication.getPrincipal();
-       AccountDto accountDto;
-       if (currentAccount.getRole() == Account.Role.ADMIN) {
-           Admin adminAccount = new Admin(currentAccount);
-
-           accountDto = new AdminDto(
-                   adminAccount.getUuid(),
-                   adminAccount.getEmail(),
-                   adminAccount.getAccountCreationDate(),
-                   adminAccount.getLastLogin(),
-                   adminAccount.getRole(),
-                   adminAccount.getPosts()
-           );
-       }
-       else if (currentAccount.getRole() == Account.Role.MAKER) {
-            Maker makerAccount = new Maker(currentAccount);
-
-            accountDto = new MakerDto(
-                    makerAccount.getUuid(),
-                    makerAccount.getEmail(),
-                    makerAccount.getCompanyName(),
-                    makerAccount.getCompanyDuration(),
-                    makerAccount.getAccountCreationDate(),
-                    makerAccount.getLastLogin(),
-                    makerAccount.getRole(),
-                    makerAccount.getPosts()
-            );
+       if (account == null) {
+           return (ResponseEntity<?>) ResponseEntity.notFound();
        }
        else {
-            User userAccount = new User(currentAccount);
-
-            accountDto = new UserDto(
-                    userAccount.getUuid(),
-                    userAccount.getEmail(),
-                    userAccount.getDisplayName(),
-                    userAccount.getAccountCreationDate(),
-                    userAccount.getLastLogin(),
-                    userAccount.getRole(),
-                    userAccount.getPosts()
-            );
+           return ResponseEntity.ok(account);
        }
-
-       return ResponseEntity.ok(accountDto);
    }
 
    @GetMapping("/")
@@ -86,4 +49,16 @@ public class AccountController {
 
        return ResponseEntity.ok(accounts);
    }
+
+//   @GetMapping("/$userId")
+//    public ResponseEntity<?> getUserById() {
+//       AccountDto foundAccount = accountService.getAccountById();
+//
+//       if (foundAccount == null) {
+//           return (ResponseEntity<?>) ResponseEntity.notFound();
+//       }
+//       else {
+//           return ResponseEntity.ok(foundAccount);
+//       }
+//   }
 }
