@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Maker extends Account{
 
-    enum Services {
+    public enum Services {
         PRODUCTION,
         TUNING,
         MODDING,

@@ -1,6 +1,5 @@
 package com.example.BalisongFlipping.services;
 
-import com.example.BalisongFlipping.dtos.AccountDto;
 import com.example.BalisongFlipping.dtos.AdminDto;
 import com.example.BalisongFlipping.dtos.MakerDto;
 import com.example.BalisongFlipping.dtos.UserDto;
@@ -24,60 +23,58 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    private AccountDto convertToDto(Account account) {
-        AccountDto accountDto;
+    public static Record converAccountToDto(Account account) throws Exception {
+        switch(account.getRole()) {
+            case ADMIN -> {
+                Admin admin = (Admin) account;
 
-        if (account.getRole() == Account.Role.ADMIN) {
-            Admin adminAccount = new Admin(account);
+                return new AdminDto(
+                        account.getUuid(),
+                        account.getEmail(),
+                        account.getRole(),
+                        account.getPosts()
+                );
 
-            accountDto = new AdminDto(
-                    adminAccount.getUuid(),
-                    adminAccount.getEmail(),
-                    adminAccount.getAccountCreationDate(),
-                    adminAccount.getLastLogin(),
-                    adminAccount.getRole(),
-                    adminAccount.getPosts()
-            );
+            }
+            case MAKER -> {
+                Maker admin = (Maker) account;
+                return new MakerDto(
+                        account.getUuid(),
+                        account.getEmail(),
+                        ((Maker) account).getCompanyName(),
+                        ((Maker) account).getCompanyDuration(),
+                        account.getRole(),
+                        account.getPosts(),
+                        ((Maker) account).getProducts(),
+                        ((Maker) account).getLinks(),
+                        ((Maker) account).getServices()
+                );
+            }
+            case USER -> {
+                User user = (User) account;
+                return new UserDto(
+                        account.getUuid(),
+                        account.getEmail(),
+                        ((User) account).getDisplayName(),
+                        account.getRole(),
+                        account.getPosts(),
+                        ((User) account).getOwnedKnives()
+                );
+            }
+            default -> {
+                throw new Exception("Failed to convert based on role type");
+            }
         }
-        else if (account.getRole() == Account.Role.MAKER) {
-            Maker makerAccount = new Maker(account);
-
-            accountDto = new MakerDto(
-                    makerAccount.getUuid(),
-                    makerAccount.getEmail(),
-                    makerAccount.getCompanyName(),
-                    makerAccount.getCompanyDuration(),
-                    makerAccount.getAccountCreationDate(),
-                    makerAccount.getLastLogin(),
-                    makerAccount.getRole(),
-                    makerAccount.getPosts()
-            );
-        }
-        else {
-            User userAccount = new User(account);
-
-            accountDto = new UserDto(
-                    userAccount.getUuid(),
-                    userAccount.getEmail(),
-                    userAccount.getDisplayName(),
-                    userAccount.getAccountCreationDate(),
-                    userAccount.getLastLogin(),
-                    userAccount.getRole(),
-                    userAccount.getPosts()
-            );
-        }
-
-        return accountDto;
     }
 
-    public AccountDto getSelf() {
+    public Record getSelf() throws Exception {
         // get authentication context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // get authorized account from principle
         Account currentAccount = (Account) authentication.getPrincipal();
 
-        return convertToDto(currentAccount);
+        return converAccountToDto(currentAccount);
     }
 
     public List<Account> allUsers() {
@@ -88,8 +85,8 @@ public class AccountService {
         return accounts;
     }
 
-    public AccountDto getAccountById(String passedID) {
+    public Record getAccountById(String passedID) throws Exception {
         Account foundAccount = accountRepository.findById(passedID).orElseThrow();
-        return convertToDto(foundAccount);
+        return converAccountToDto(foundAccount);
     }
 }

@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RegisterAccountDto {
     private String email;
+    private String accountName;
     private String password;
     private Account.Role role;
 

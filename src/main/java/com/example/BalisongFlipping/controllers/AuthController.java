@@ -3,6 +3,7 @@ package com.example.BalisongFlipping.controllers;
 import com.example.BalisongFlipping.dtos.LoginAccountDto;
 import com.example.BalisongFlipping.dtos.RegisterAccountDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
+import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.AuthService;
 import com.example.BalisongFlipping.services.JwtService;
 import lombok.Getter;
@@ -40,7 +41,7 @@ public class AuthController {
         System.out.println("Calling Post API auth/signup...");
         Account registeredUser = authenticationService.signup(registerUserDto);
 
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(registeredUser.getUuid() + " successfully created.");
     }
 
     /**
@@ -53,7 +54,7 @@ public class AuthController {
      * - Translation... attempts to log in a user by checking user credentials and jwt passed
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto) {
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto) throws Exception {
         Account authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -61,6 +62,7 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
+        loginResponse.setAccount(AccountService.converAccountToDto(authenticatedUser));
 
         return ResponseEntity.ok(loginResponse);
     }
@@ -70,6 +72,6 @@ public class AuthController {
     public class LoginResponse {
         private String token;
         private long expiresIn;
-
+        Record account;
     }
 }

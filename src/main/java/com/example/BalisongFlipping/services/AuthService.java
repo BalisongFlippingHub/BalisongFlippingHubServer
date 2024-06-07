@@ -41,7 +41,7 @@ public class AuthService {
             maker.setRole(input.getRole());
             maker.setAccountCreationDate(new Date());
             maker.setLastLogin(new Date());
-            maker.setCompanyName("");
+            maker.setCompanyName(input.getAccountName());
             maker.setCompanyDuration(0.0);
             maker.setPosts(new ArrayList<>());
             maker.setServices(new ArrayList<>());
@@ -56,7 +56,7 @@ public class AuthService {
             user.setRole(input.getRole());
             user.setAccountCreationDate(new Date());
             user.setLastLogin(new Date());
-            user.setDisplayName("");
+            user.setDisplayName(input.getAccountName());
             user.setPosts(new ArrayList<>());
             user.setOwnedKnives(new ArrayList<>());
             return accountRepository.save(user);
