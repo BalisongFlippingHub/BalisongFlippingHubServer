@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -17,6 +14,10 @@ import java.util.List;
 public class User extends Account {
     private String displayName;
     private List<OwnedKnife> ownedKnives;
+
+    private String facebookLink;
+    private String twitterLink;
+    private String instagramLink;
 
     public User(Account account) {
         super(account);

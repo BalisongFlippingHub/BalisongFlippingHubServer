@@ -38,7 +38,7 @@ public class Account implements UserDetails {
     private Date lastLogin;
     private Role role;
 
-    private List<Post> posts;
+    private List<String> posts;
 
     public Account(String email, String password, Date accountCreationDate, Date lastLogin, Role role) {
         this.email = email;
@@ -46,7 +46,7 @@ public class Account implements UserDetails {
         this.accountCreationDate = accountCreationDate;
         this.lastLogin = lastLogin;
         this.role = role;
-        this.posts = new ArrayList<Post>();
+        this.posts = new ArrayList<String>();
     }
 
     public Account(Account account) {

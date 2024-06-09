@@ -1,6 +1,5 @@
 package com.example.BalisongFlipping.modals.accounts;
 
-import com.example.BalisongFlipping.modals.knives.MakersKnife;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,12 @@ public class Maker extends Account{
     private double companyDuration;
     private List<String> products;
     private List<Services> services;
-    private List<String> links;
+
+    private String facebookLink;
+    private String twitterLink;
+    private String instagramLink;
+    private String emailLink;
+    private String personalWebsiteLink;
 
     public Maker(Account account) {
         super(account);
