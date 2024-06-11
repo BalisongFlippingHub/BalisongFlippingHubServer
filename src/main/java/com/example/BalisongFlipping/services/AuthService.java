@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -34,31 +35,50 @@ public class AuthService {
     }
 
     public Account signup(RegisterAccountDto input) {
-        if (input.getRole() == Account.Role.MAKER) {
+        if (input.role() == Account.Role.MAKER) {
             Maker maker = new Maker();
-            maker.setEmail(input.getEmail());
-            maker.setPassword(passwordEncoder.encode(input.getPassword()));
-            maker.setRole(input.getRole());
+            maker.setEmail(input.email());
+            maker.setPassword(passwordEncoder.encode(input.password()));
+            maker.setRole(input.role());
             maker.setAccountCreationDate(new Date());
             maker.setLastLogin(new Date());
-            maker.setCompanyName(input.getAccountName());
+            maker.setCompanyName(input.accountName());
             maker.setCompanyDuration(0.0);
             maker.setPosts(new ArrayList<>());
             maker.setServices(new ArrayList<>());
             maker.setProducts(new ArrayList<>());
-            maker.setLinks(new ArrayList<>());
+            maker.setFacebookLink("");
+            maker.setInstagramLink("");
+            maker.setPersonalWebsiteLink("");
+            maker.setEmailLink("");
+            maker.setTwitterLink("");
+
+            Optional<Account> holder = accountRepository.findAccountByEmail(input.email());
+            if (holder.isPresent()) {
+                return null;
+            }
+
             return accountRepository.save(maker);
         }
         else {
             User user = new User();
-            user.setEmail(input.getEmail());
-            user.setPassword(passwordEncoder.encode(input.getPassword()));
-            user.setRole(input.getRole());
+            user.setEmail(input.email());
+            user.setPassword(passwordEncoder.encode(input.password()));
+            user.setRole(input.role());
             user.setAccountCreationDate(new Date());
             user.setLastLogin(new Date());
-            user.setDisplayName(input.getAccountName());
+            user.setDisplayName(input.accountName());
             user.setPosts(new ArrayList<>());
             user.setOwnedKnives(new ArrayList<>());
+            user.setFacebookLink("");
+            user.setInstagramLink("");
+            user.setTwitterLink("");
+
+            Optional<Account> holder = accountRepository.findAccountByEmail(input.email());
+            if (holder.isPresent()) {
+                return null;
+            }
+
             return accountRepository.save(user);
         }
     }
@@ -66,12 +86,12 @@ public class AuthService {
     public Account authenticate(LoginAccountDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        input.getEmail(),
-                        input.getPassword()
+                        input.email(),
+                        input.password()
                 )
         );
 
-        return accountRepository.findAccountByEmail(input.getEmail())
+        return accountRepository.findAccountByEmail(input.email())
                 .orElseThrow();
     }
 }

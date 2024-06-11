@@ -46,8 +46,12 @@ public class AccountService {
                         account.getRole(),
                         account.getPosts(),
                         ((Maker) account).getProducts(),
-                        ((Maker) account).getLinks(),
-                        ((Maker) account).getServices()
+                        ((Maker) account).getServices(),
+                        ((Maker) account).getFacebookLink(),
+                        ((Maker) account).getInstagramLink(),
+                        ((Maker) account).getTwitterLink(),
+                        ((Maker) account).getEmailLink(),
+                        ((Maker) account).getPersonalWebsiteLink()
                 );
             }
             case USER -> {
@@ -58,7 +62,10 @@ public class AccountService {
                         ((User) account).getDisplayName(),
                         account.getRole(),
                         account.getPosts(),
-                        ((User) account).getOwnedKnives()
+                        ((User) account).getOwnedKnives(),
+                        ((User) account).getFacebookLink(),
+                        ((User) account).getTwitterLink(),
+                        ((User) account).getInstagramLink()
                 );
             }
             default -> {

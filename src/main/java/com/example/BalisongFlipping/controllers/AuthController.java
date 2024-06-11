@@ -41,6 +41,9 @@ public class AuthController {
         System.out.println("Calling Post API auth/signup...");
         Account registeredUser = authenticationService.signup(registerUserDto);
 
+        if (registeredUser == null) {
+            return ResponseEntity.badRequest().body("Email already exists.");
+        }
         return ResponseEntity.ok(registeredUser.getUuid() + " successfully created.");
     }
 
@@ -55,7 +58,9 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto) throws Exception {
+        System.out.println("Calling login");
         Account authenticatedUser = authenticationService.authenticate(loginUserDto);
+        System.out.println("Authenticated User: " + authenticatedUser);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 

@@ -11,5 +11,5 @@ public record AdminDto(
         String uuid,
         String email,
         Account.Role role,
-        List<Post> posts
+        List<String> posts
 ){}

@@ -14,11 +14,14 @@ public record MakerDto(
         String companyName,
         double companyDuration,
         Account.Role role,
-        List<Post> posts,
+        List<String> posts,
         List<String> products,
-        List<String> links,
-        List<Maker.Services> services
-
+        List<Maker.Services> services,
+        String facebookLink,
+        String instagramLink,
+        String twitterLink,
+        String personalEmailLink,
+        String personalWebsiteLink
 ){
 
 }

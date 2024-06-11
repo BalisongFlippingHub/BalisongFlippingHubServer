@@ -11,6 +11,9 @@ public record UserDto(
         String email,
         String displayName,
         Account.Role role,
-        List<Post> posts,
-        List<OwnedKnife> ownedKnives
+        List<String> posts,
+        List<OwnedKnife> ownedKnives,
+        String facebookLink,
+        String twitterLink,
+        String instagramLink
 ){}
