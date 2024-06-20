@@ -1,11 +1,11 @@
 package com.example.BalisongFlipping.modals.comments;
 
-import com.example.BalisongFlipping.modals.likes.Like;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+
 
 import java.util.List;
 
@@ -16,12 +16,13 @@ import java.util.List;
 public class Comment {
 
     @Id
-    private String uuid;
+    private String id;
 
     private String comment;
     private String accountID;
     private String accountDisplayName;
+    private String accountProfileImg;
 
-    private List<Like> likes;
+    private int likes;
     private List<Comment> replies;
 }

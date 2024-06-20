@@ -9,12 +9,14 @@ import io.jsonwebtoken.impl.lang.Services;
 import java.util.List;
 
 public record MakerDto(
-        String uuid,
+        String id,
         String email,
         String companyName,
         double companyDuration,
         Account.Role role,
         List<String> posts,
+        FileDto profileImg,
+        FileDto bannerImg,
         List<String> products,
         List<Maker.Services> services,
         String facebookLink,

@@ -1,12 +1,15 @@
 package com.example.BalisongFlipping.modals.accounts;
 
-import com.example.BalisongFlipping.modals.posts.Post;
+
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection="Accounts")
+@Document("accounts")
 public class Account implements UserDetails {
 
     public enum Role {
@@ -27,8 +30,8 @@ public class Account implements UserDetails {
     }
 
     // members
-    @Id
-    private String uuid;
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
 
     @Indexed(unique = true)
     private String email;
@@ -40,6 +43,9 @@ public class Account implements UserDetails {
 
     private List<String> posts;
 
+    private String profileImg;
+    private String bannerImg;
+
     public Account(String email, String password, Date accountCreationDate, Date lastLogin, Role role) {
         this.email = email;
         this.password = password;
@@ -50,7 +56,7 @@ public class Account implements UserDetails {
     }
 
     public Account(Account account) {
-        this.uuid = account.getUuid();
+        this.id = account.getId();
         this.email = account.getEmail();
         this.password = account.getPassword();
         this.accountCreationDate = account.getAccountCreationDate();

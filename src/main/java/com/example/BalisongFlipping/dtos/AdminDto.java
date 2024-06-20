@@ -8,7 +8,7 @@ import io.jsonwebtoken.impl.lang.Services;
 import java.util.List;
 
 public record AdminDto(
-        String uuid,
+        String id,
         String email,
         Account.Role role,
         List<String> posts

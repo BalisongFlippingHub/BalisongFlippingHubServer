@@ -44,7 +44,7 @@ public class AuthController {
         if (registeredUser == null) {
             return ResponseEntity.badRequest().body("Email already exists.");
         }
-        return ResponseEntity.ok(registeredUser.getUuid() + " successfully created.");
+        return ResponseEntity.ok(registeredUser.getId() + " successfully created.");
     }
 
     /**

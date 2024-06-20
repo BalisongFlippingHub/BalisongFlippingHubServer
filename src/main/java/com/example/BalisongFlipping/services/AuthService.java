@@ -40,6 +40,8 @@ public class AuthService {
             maker.setEmail(input.email());
             maker.setPassword(passwordEncoder.encode(input.password()));
             maker.setRole(input.role());
+            maker.setBannerImg("");
+            maker.setProfileImg("");
             maker.setAccountCreationDate(new Date());
             maker.setLastLogin(new Date());
             maker.setCompanyName(input.accountName());
@@ -65,6 +67,8 @@ public class AuthService {
             user.setEmail(input.email());
             user.setPassword(passwordEncoder.encode(input.password()));
             user.setRole(input.role());
+            user.setBannerImg("");
+            user.setProfileImg("");
             user.setAccountCreationDate(new Date());
             user.setLastLogin(new Date());
             user.setDisplayName(input.accountName());
