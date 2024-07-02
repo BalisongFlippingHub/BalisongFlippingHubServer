@@ -1,12 +1,8 @@
 package com.example.BalisongFlipping.controllers;
-
-import com.example.BalisongFlipping.dtos.RegisterAccountDto;
-import com.example.BalisongFlipping.dtos.UploadAccountAssetDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.services.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,21 +32,35 @@ public class AccountController {
 
    @PostMapping(value = "/me/update-profile-img", consumes = "multipart/form-data")
    public ResponseEntity<String> updateProfileImg(@RequestParam("accountId") String accountId, @RequestParam("file") MultipartFile file) throws Exception {
-       System.out.println("Updating Profile Img on account: " + accountId);
-       System.out.println(("Passed File: " + file.getOriginalFilename()));
 
-       // store image in JavaFS
-       if (accountService.updateProfileImg(accountId, file)) {
-           // return ok upon successful update of profile img
-           System.out.println("Return true call for successfully storing file");
-           return new ResponseEntity<>("Success", HttpStatus.OK);
+       if (!accountService.checkForAccountExistance(accountId)) {
+           return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
        }
-       else {
-           // return bad request status for failed storage of file
-           System.out.println("Return false call for failing to store file");
-           return new ResponseEntity<>("Failed", HttpStatus.CONFLICT);
+
+        String imgId = accountService.updateProfileImg(accountId, file);
+
+       if (imgId.isEmpty()) {
+           return new ResponseEntity<>("Failed to store img", HttpStatus.CONFLICT);
        }
+
+       return new ResponseEntity<String>(imgId, HttpStatus.OK);
    }
+
+    @PostMapping(value = "/me/update-banner-img", consumes = "multipart/form-data")
+    public ResponseEntity<String> updateBannerImg(@RequestParam("accountId") String accountId, @RequestParam("file") MultipartFile file) throws Exception {
+
+        if (!accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        String imgId = accountService.updateBannerImg(accountId, file);
+
+        if (imgId.isEmpty()) {
+            return new ResponseEntity<>("Failed to store img", HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<String>(imgId, HttpStatus.OK);
+    }
 
    @GetMapping("/")
     public ResponseEntity<List<Account>> allUsers() {
@@ -58,16 +68,4 @@ public class AccountController {
 
        return ResponseEntity.ok(accounts);
    }
-
-//   @GetMapping("/$userId")
-//    public ResponseEntity<?> getUserById() {
-//       AccountDto foundAccount = accountService.getAccountById();
-//
-//       if (foundAccount == null) {
-//           return (ResponseEntity<?>) ResponseEntity.notFound();
-//       }
-//       else {
-//           return ResponseEntity.ok(foundAccount);
-//       }
-//   }
 }

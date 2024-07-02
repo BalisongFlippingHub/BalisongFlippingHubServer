@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -20,8 +21,8 @@ public class Comment {
 
     private String comment;
     private String accountID;
-    private String accountDisplayName;
-    private String accountProfileImg;
+
+    private Date creationDate;
 
     private int likes;
     private List<Comment> replies;

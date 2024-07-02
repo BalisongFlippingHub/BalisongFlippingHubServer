@@ -5,6 +5,7 @@ import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,7 +35,8 @@ public class JavaFSService {
         System.out.println("Adding asset");
         DBObject metadata = new BasicDBObject();
 
-        metadata.put("type", "file");
+        metadata.put("type", file.getContentType());
+        metadata.put("fileSize", file.getSize());
         metadata.put("title", title);
         ObjectId id = gridFsTemplate.store(file.getInputStream(), file.getName(), file.getContentType(), metadata);
 
@@ -46,16 +48,26 @@ public class JavaFSService {
         GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
 
         if (file == null) {
-            return null;
+           return null;
         }
 
-        FileDto assetDto = new FileDto(
+       return new FileDto(
                 file.getMetadata().get("title").toString(),
                 gridFsOperations.getResource(file).getContentType(),
                 file.getMetadata().get("fileSize").toString(),
-                (gridFsOperations.getResource(file).getInputStream()).readAllBytes()
+                IOUtils.toByteArray(gridFsOperations.getResource(file).getInputStream())
         );
+    }
 
-        return assetDto;
+    public boolean deleteAsset(String id) throws Exception {
+        try {
+            gridFsOperations.delete(new Query(Criteria.where("_id").is(id)));
+            GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
+
+            return file == null;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

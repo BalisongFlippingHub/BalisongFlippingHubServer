@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import java.util.List;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -24,11 +25,11 @@ public class Post {
     private String caption;
     private boolean captionAbove;
     private String accountId;
-    private String accountDisplayName;
-    private String profileImg;
 
     private List<Comment> comments;
     private int likes;
 
-    private List<String> assets;
+    private Date creationDate;
+
+    private List<String> files;
 }

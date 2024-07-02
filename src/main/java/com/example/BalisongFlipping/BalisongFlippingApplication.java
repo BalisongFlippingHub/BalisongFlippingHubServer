@@ -14,10 +14,10 @@ public class BalisongFlippingApplication {
 		SpringApplication.run(BalisongFlippingApplication.class, args);
 	}
 
-//	@Bean
-//	CommandLineRunner runner(AccountRepository accountRepository, MongoTemplate mongoTemplate) {
-//		return args -> {
-//			accountRepository.deleteAll();
-//		};
-//	}
+	@Bean
+	CommandLineRunner runner(AccountRepository accountRepository, MongoTemplate mongoTemplate) {
+		return args -> {
+			accountRepository.deleteAll();
+		};
+	}
 }

@@ -43,7 +43,7 @@ public class SecurityFilterConfig {
 
         http.authorizeHttpRequests((auth) -> {
             auth
-                    .requestMatchers("/auth/**", "/tutorials")
+                    .requestMatchers("/auth/**", "/tutorials", "/file/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated();
@@ -61,8 +61,10 @@ public class SecurityFilterConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "PATCH"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowedHeaders(List.of("Authorization","Content-Type", "Origin", "Accept"));
+        configuration.setExposedHeaders(List.of("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+                "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
