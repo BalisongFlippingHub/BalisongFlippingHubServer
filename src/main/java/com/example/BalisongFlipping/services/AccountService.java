@@ -115,7 +115,7 @@ public class AccountService {
      * @return              (Returns true/false value for account existing in repo based on passed id
      */
     public boolean checkForAccountExistance(String accountId) {
-        return accountRepository.existsById(new ObjectId(accountId.substring(1, accountId.length() - 1)));
+        return !accountRepository.existsById(new ObjectId(accountId));
     }
 
     /***
@@ -128,7 +128,7 @@ public class AccountService {
      * then attempts to update that profile image on the db for that user.
      */
     public String updateProfileImg(String accountId, MultipartFile file)  {
-        Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId.substring(1, accountId.length() - 1)));
+        Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
 
         // if account isn't found with passed id, return false
         if (foundAccount.isEmpty()) return null;
@@ -166,7 +166,7 @@ public class AccountService {
      * then attempts to update that banner image on the db for that user.
      */
     public String updateBannerImg(String accountId, MultipartFile file) {
-        Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId.substring(1, accountId.length() - 1)));
+        Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
 
         // if account isn't found with passed id, return false
         if (foundAccount.isEmpty()) return null;

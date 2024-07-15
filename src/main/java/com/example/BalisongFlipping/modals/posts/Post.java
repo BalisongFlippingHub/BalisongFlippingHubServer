@@ -23,10 +23,16 @@ public class Post {
     private String id;
 
     private String caption;
-    private boolean captionAbove;
-    private String accountId;
+    private String description;
+    private String identifer;
 
-    private List<Comment> comments;
+    private boolean isPrivate;
+    private boolean isAnnouncement;
+    private boolean hasTimer;
+
+    private String creatorId;
+
+    private List<String> comments;
     private int likes;
 
     private Date creationDate;

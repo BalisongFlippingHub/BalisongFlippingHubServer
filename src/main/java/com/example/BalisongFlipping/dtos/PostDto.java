@@ -5,17 +5,21 @@ public record PostDto(
     String id,
 
     String caption,
-    boolean captionAbove,
+    String description,
 
-    String tagIdentifier,
+    boolean isPrivate,
+    boolean isAnnouncement,
+    boolean hasTimer,
 
-    String accountId,
-    String accountName,
-    String accountProfileImg,
+    String identifier,
+
+    String creatorId,
+    String creatorName,
+    String creatorProfileImg,
 
     String creationDate,
 
-    List<CommentDto>comments,
+    List<String>comments,
 
     int likes,
 

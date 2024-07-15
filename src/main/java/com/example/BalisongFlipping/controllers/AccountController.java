@@ -33,7 +33,7 @@ public class AccountController {
    @PostMapping(value = "/me/update-profile-img", consumes = "multipart/form-data")
    public ResponseEntity<String> updateProfileImg(@RequestParam("accountId") String accountId, @RequestParam("file") MultipartFile file) throws Exception {
 
-       if (!accountService.checkForAccountExistance(accountId)) {
+       if (accountService.checkForAccountExistance(accountId)) {
            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
        }
 
@@ -49,7 +49,7 @@ public class AccountController {
     @PostMapping(value = "/me/update-banner-img", consumes = "multipart/form-data")
     public ResponseEntity<String> updateBannerImg(@RequestParam("accountId") String accountId, @RequestParam("file") MultipartFile file) throws Exception {
 
-        if (!accountService.checkForAccountExistance(accountId)) {
+        if (accountService.checkForAccountExistance(accountId)) {
             return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
         }
 
