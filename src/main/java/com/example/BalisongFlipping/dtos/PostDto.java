@@ -1,4 +1,5 @@
 package com.example.BalisongFlipping.dtos;
+import java.util.Date;
 import java.util.List;
 
 public record PostDto(
@@ -17,7 +18,7 @@ public record PostDto(
     String creatorName,
     String creatorProfileImg,
 
-    String creationDate,
+    Date creationDate,
 
     List<String>comments,
 

@@ -3,6 +3,8 @@ package com.example.BalisongFlipping.services;
 import com.example.BalisongFlipping.dtos.NewPostDto;
 import com.example.BalisongFlipping.dtos.PostDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
+import com.example.BalisongFlipping.modals.accounts.Maker;
+import com.example.BalisongFlipping.modals.accounts.User;
 import com.example.BalisongFlipping.modals.posts.Post;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.example.BalisongFlipping.repositories.PostsRepository;
@@ -114,15 +116,6 @@ public class PostService {
         }
     }
 
-    private String getCreationDateString(Date creationDate) {
-
-        return "";
-    }
-
-    private double getTimerHours(String hours) {
-        return 0.0;
-    }
-
     public PostDto getPost(String id) {
         Optional<Post> foundPost = postsRepository.findById(id);
 
@@ -137,22 +130,60 @@ public class PostService {
         }
 
         if (foundPost.get().isHasTimer()) {
-            return new PostDto(
-                    foundPost.get().getId(),
-                    foundPost.get().getCaption(),
-                    foundPost.get().getDescription(),
-                    foundPost.get().isPrivate(),
-                    foundPost.get().isAnnouncement(),
-                    false,
-                    foundPost.get().getIdentifer(),
-                    foundPost.get().getCreatorId(),
-                    creatorAccount.get().getUsername(),
-                    creatorAccount.get().getProfileImg(),
-                    getCreationDateString(foundPost.get().getCreationDate()),
-                    foundPost.get().getComments(),
-                    foundPost.get().getLikes(),
-                    foundPost.get().getFiles()
-            );
+            if (creatorAccount.get().getRole() == Account.Role.USER) {
+                return new PostDto(
+                        foundPost.get().getId(),
+                        foundPost.get().getCaption(),
+                        foundPost.get().getDescription(),
+                        foundPost.get().isPrivate(),
+                        foundPost.get().isAnnouncement(),
+                        false,
+                        foundPost.get().getIdentifer(),
+                        foundPost.get().getCreatorId(),
+                        ((User) creatorAccount.get()).getDisplayName(),
+                        creatorAccount.get().getProfileImg(),
+                        foundPost.get().getCreationDate(),
+                        foundPost.get().getComments(),
+                        foundPost.get().getLikes(),
+                        foundPost.get().getFiles()
+                );
+            }
+            else if (creatorAccount.get().getRole() == Account.Role.MAKER) {
+                return new PostDto(
+                        foundPost.get().getId(),
+                        foundPost.get().getCaption(),
+                        foundPost.get().getDescription(),
+                        foundPost.get().isPrivate(),
+                        foundPost.get().isAnnouncement(),
+                        false,
+                        foundPost.get().getIdentifer(),
+                        foundPost.get().getCreatorId(),
+                        ((Maker) creatorAccount.get()).getCompanyName(),
+                        creatorAccount.get().getProfileImg(),
+                        foundPost.get().getCreationDate(),
+                        foundPost.get().getComments(),
+                        foundPost.get().getLikes(),
+                        foundPost.get().getFiles()
+                );
+            }
+            else {
+                return new PostDto(
+                        foundPost.get().getId(),
+                        foundPost.get().getCaption(),
+                        foundPost.get().getDescription(),
+                        foundPost.get().isPrivate(),
+                        foundPost.get().isAnnouncement(),
+                        false,
+                        foundPost.get().getIdentifer(),
+                        foundPost.get().getCreatorId(),
+                        ((User) creatorAccount.get()).getDisplayName(),
+                        creatorAccount.get().getProfileImg(),
+                        foundPost.get().getCreationDate(),
+                        foundPost.get().getComments(),
+                        foundPost.get().getLikes(),
+                        foundPost.get().getFiles()
+                );
+            }
         }
         else {
             return new PostDto(
@@ -166,7 +197,7 @@ public class PostService {
                     foundPost.get().getCreatorId(),
                     creatorAccount.get().getUsername(),
                     creatorAccount.get().getProfileImg(),
-                    getCreationDateString(foundPost.get().getCreationDate()),
+                    foundPost.get().getCreationDate(),
                     foundPost.get().getComments(),
                     foundPost.get().getLikes(),
                     foundPost.get().getFiles()
