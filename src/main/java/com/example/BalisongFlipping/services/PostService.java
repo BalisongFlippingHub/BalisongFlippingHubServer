@@ -1,6 +1,7 @@
 package com.example.BalisongFlipping.services;
 
 import com.example.BalisongFlipping.dtos.NewPostDto;
+import com.example.BalisongFlipping.dtos.PostCoverDTO;
 import com.example.BalisongFlipping.dtos.PostDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.modals.accounts.Maker;
@@ -9,6 +10,7 @@ import com.example.BalisongFlipping.modals.posts.Post;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.example.BalisongFlipping.repositories.PostsRepository;
 import org.bson.types.ObjectId;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +32,105 @@ public class PostService {
         this.javaFSService = javaFSService;
     }
 
+    public PostCoverDTO generatePostCoverDTO(Post p) throws Exception {
+
+        if (p.getFiles().isEmpty()) {
+            return new PostCoverDTO(
+                    p.getId(),
+                    p.getLikes(),
+                    p.getCommentsNum(),
+                    p.getIdentifier(),
+                    p.getCaption(),
+                    "",
+                    p.isPrivate(),
+                    p.isAnnouncement()
+            );
+        }
+        else {
+            return new PostCoverDTO(
+                    p.getId(),
+                    p.getLikes(),
+                    p.getCommentsNum(),
+                    p.getIdentifier(),
+                    p.getCaption(),
+                    p.getFiles().getFirst(),
+                    p.isPrivate(),
+                    p.isAnnouncement()
+            );
+        }
+    }
+
+    public PostDto generatePostDto(Post p) throws Exception {
+        Optional<Account> account = accountRepository.findById(new ObjectId(p.getCreatorId()));
+
+        if (account.isEmpty()) {
+            throw new Exception("User Not Found");
+        }
+
+        switch (account.get().getRole()) {
+            case ADMIN -> {
+                return new PostDto(
+                        p.getId(),
+                        p.getCaption(),
+                        p.getDescription(),
+                        p.isPrivate(),
+                        p.isAnnouncement(),
+                        p.isHasTimer(),
+                        p.getIdentifier(),
+                        p.getCreatorId(),
+                        "ADMIN",
+                        "",
+                        p.getCreationDate(),
+                        p.getComments(),
+                        p.getLikes(),
+                        p.getFiles()
+                );
+            }
+
+            case MAKER -> {
+                return new PostDto(
+                        p.getId(),
+                        p.getCaption(),
+                        p.getDescription(),
+                        p.isPrivate(),
+                        p.isAnnouncement(),
+                        p.isHasTimer(),
+                        p.getIdentifier(),
+                        p.getCreatorId(),
+                        ((Maker) account.get()).getCompanyName(),
+                        account.get().getProfileImg(),
+                        p.getCreationDate(),
+                        p.getComments(),
+                        p.getLikes(),
+                        p.getFiles()
+                );
+            }
+
+            case USER -> {
+                return new PostDto(
+                        p.getId(),
+                        p.getCaption(),
+                        p.getDescription(),
+                        p.isPrivate(),
+                        p.isAnnouncement(),
+                        p.isHasTimer(),
+                        p.getIdentifier(),
+                        p.getCreatorId(),
+                        ((User) account.get()).getDisplayName(),
+                        account.get().getProfileImg(),
+                        p.getCreationDate(),
+                        p.getComments(),
+                        p.getLikes(),
+                        p.getFiles()
+                );
+            }
+
+            default -> {
+                throw new Exception("User has invalid role");
+            }
+        }
+    }
+
     public String createPost(NewPostDto newPost) throws Exception {
         // get account in repo
         Optional<Account> account = accountRepository.findById(new ObjectId(newPost.creatorId()));
@@ -41,11 +142,12 @@ public class PostService {
         newPostObj.setDescription(newPost.description());
         newPostObj.setCreationDate(new Date());
         newPostObj.setComments(new ArrayList<String>());
-        newPostObj.setFiles(null);
-        newPostObj.setIdentifer(newPost.identifier());
+        newPostObj.setFiles(new ArrayList<String>());
+        newPostObj.setIdentifier(newPost.identifier());
         newPostObj.setPrivate(newPost.isPrivatePost());
         newPostObj.setAnnouncement(newPost.isAnnouncement());
         newPostObj.setLikes(0);
+        newPostObj.setCommentsNum(0);
         newPostObj.setHasTimer(false);
 
         try {
@@ -92,10 +194,11 @@ public class PostService {
         newPostObj.setCreationDate(new Date());
         newPostObj.setComments(new ArrayList<String>());
         newPostObj.setFiles(fileIds);
-        newPostObj.setIdentifer(newPost.identifier());
+        newPostObj.setIdentifier(newPost.identifier());
         newPostObj.setPrivate(newPost.isPrivatePost());
         newPostObj.setAnnouncement(newPost.isAnnouncement());
         newPostObj.setLikes(0);
+        newPostObj.setCommentsNum(0);
         newPostObj.setHasTimer(false);
 
         try {
@@ -116,7 +219,52 @@ public class PostService {
         }
     }
 
-    public PostDto getPost(String id) {
+    public List<PostDto> getUsersPosts(String userId) throws Exception {
+        try {
+            Optional<Account> account = accountRepository.findById(new ObjectId(userId));
+
+            if (account.isEmpty()) {
+                throw new Exception("User Not Found");
+            }
+
+            List<Post> posts = postsRepository.findAllByCreatorId(userId);
+            List<PostDto> postsDto = new ArrayList<>();
+
+            for(Post p: posts) {
+                postsDto.add(generatePostDto(p));
+            }
+
+            return postsDto;
+        }
+        catch(Exception e) {
+            throw e;
+        }
+    }
+
+    public List<PostCoverDTO> getUsersPostsCovers(String userId) throws Exception {
+        try {
+            Optional<Account> account = accountRepository.findById(new ObjectId(userId));
+
+            if (account.isEmpty()) {
+                throw new Exception("User Not Found");
+            }
+
+            List<Post> posts = postsRepository.findAllByCreatorId(userId);
+            List<PostCoverDTO> postsDto = new ArrayList<>();
+
+            for(Post p: posts) {
+                postsDto.add(generatePostCoverDTO(p));
+            }
+
+            return postsDto;
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+    }
+
+    public PostDto getPost(String id) throws Exception {
         Optional<Post> foundPost = postsRepository.findById(id);
 
         if (foundPost.isEmpty()) {
@@ -129,79 +277,6 @@ public class PostService {
             return null;
         }
 
-        if (foundPost.get().isHasTimer()) {
-            if (creatorAccount.get().getRole() == Account.Role.USER) {
-                return new PostDto(
-                        foundPost.get().getId(),
-                        foundPost.get().getCaption(),
-                        foundPost.get().getDescription(),
-                        foundPost.get().isPrivate(),
-                        foundPost.get().isAnnouncement(),
-                        false,
-                        foundPost.get().getIdentifer(),
-                        foundPost.get().getCreatorId(),
-                        ((User) creatorAccount.get()).getDisplayName(),
-                        creatorAccount.get().getProfileImg(),
-                        foundPost.get().getCreationDate(),
-                        foundPost.get().getComments(),
-                        foundPost.get().getLikes(),
-                        foundPost.get().getFiles()
-                );
-            }
-            else if (creatorAccount.get().getRole() == Account.Role.MAKER) {
-                return new PostDto(
-                        foundPost.get().getId(),
-                        foundPost.get().getCaption(),
-                        foundPost.get().getDescription(),
-                        foundPost.get().isPrivate(),
-                        foundPost.get().isAnnouncement(),
-                        false,
-                        foundPost.get().getIdentifer(),
-                        foundPost.get().getCreatorId(),
-                        ((Maker) creatorAccount.get()).getCompanyName(),
-                        creatorAccount.get().getProfileImg(),
-                        foundPost.get().getCreationDate(),
-                        foundPost.get().getComments(),
-                        foundPost.get().getLikes(),
-                        foundPost.get().getFiles()
-                );
-            }
-            else {
-                return new PostDto(
-                        foundPost.get().getId(),
-                        foundPost.get().getCaption(),
-                        foundPost.get().getDescription(),
-                        foundPost.get().isPrivate(),
-                        foundPost.get().isAnnouncement(),
-                        false,
-                        foundPost.get().getIdentifer(),
-                        foundPost.get().getCreatorId(),
-                        ((User) creatorAccount.get()).getDisplayName(),
-                        creatorAccount.get().getProfileImg(),
-                        foundPost.get().getCreationDate(),
-                        foundPost.get().getComments(),
-                        foundPost.get().getLikes(),
-                        foundPost.get().getFiles()
-                );
-            }
-        }
-        else {
-            return new PostDto(
-                    foundPost.get().getId(),
-                    foundPost.get().getCaption(),
-                    foundPost.get().getDescription(),
-                    foundPost.get().isPrivate(),
-                    foundPost.get().isAnnouncement(),
-                    false,
-                    foundPost.get().getIdentifer(),
-                    foundPost.get().getCreatorId(),
-                    creatorAccount.get().getUsername(),
-                    creatorAccount.get().getProfileImg(),
-                    foundPost.get().getCreationDate(),
-                    foundPost.get().getComments(),
-                    foundPost.get().getLikes(),
-                    foundPost.get().getFiles()
-            );
-        }
+        return generatePostDto(foundPost.get());
     }
 }

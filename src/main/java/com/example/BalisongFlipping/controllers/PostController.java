@@ -2,6 +2,7 @@ package com.example.BalisongFlipping.controllers;
 
 import com.example.BalisongFlipping.dtos.FileDto;
 import com.example.BalisongFlipping.dtos.NewPostDto;
+import com.example.BalisongFlipping.dtos.PostCoverDTO;
 import com.example.BalisongFlipping.dtos.PostDto;
 import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.PostService;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.EscapedErrors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,18 @@ public class PostController {
     public PostController(PostService postService, AccountService accountService) {
         this.postService = postService;
         this.accountService = accountService;
+    }
+
+    @GetMapping("/any/{userId}/posts")
+    public ResponseEntity<?> getUsersPosts (@PathVariable String userId) {
+        try {
+            List<PostCoverDTO> posts = postService.getUsersPostsCovers(userId);
+
+            return new ResponseEntity<List<PostCoverDTO>>(posts, HttpStatus.OK);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<String>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping(value = "/me/create-post", consumes = "multipart/form-data")
@@ -68,7 +82,7 @@ public class PostController {
     }
 
     @GetMapping("/any/{id}")
-    public ResponseEntity<?> getPost(@PathVariable String id) {
+    public ResponseEntity<?> getPost(@PathVariable String id) throws Exception {
         System.out.println(id);
         PostDto post = postService.getPost(id);
 

@@ -24,7 +24,7 @@ public class Post {
 
     private String caption;
     private String description;
-    private String identifer;
+    private String identifier;
 
     private boolean isPrivate;
     private boolean isAnnouncement;
@@ -33,6 +33,7 @@ public class Post {
     private String creatorId;
 
     private List<String> comments;
+    private int commentsNum;
     private int likes;
 
     private Date creationDate;
