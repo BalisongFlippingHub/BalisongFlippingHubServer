@@ -1,26 +1,45 @@
 package com.example.BalisongFlipping.modals.accounts;
 
-import com.example.BalisongFlipping.modals.knives.OwnedKnife;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends Account {
+
+    public User(String email, String password, String displayName) {
+        super(email, password);
+
+        this.displayName = displayName;
+        profileImg = "";
+        bannerImg = "";
+        collectionId = "";
+
+        setRole("USER");
+
+        facebookLink = "";
+        twitterLink = "";
+        instagramLink = "";
+        youtubeLink = "";
+        discordLink = "";
+        redditLink = "";
+    }
+
     private String displayName;
-    private List<OwnedKnife> ownedKnives;
+    private String profileImg;
+    private String bannerImg;
+    private String collectionId;
 
     private String facebookLink;
     private String twitterLink;
     private String instagramLink;
+    private String youtubeLink;
+    private String discordLink;
+    private String redditLink;
 
-    public User(Account account) {
-        super(account);
 
-    }
 }

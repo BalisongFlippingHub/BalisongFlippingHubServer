@@ -38,12 +38,20 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterAccountDto registerUserDto) {
-        System.out.println("Calling Post API auth/signup...");
+        // validate new user info
+        if (!authenticationService.validateNewUser(registerUserDto)) {
+            return ResponseEntity.badRequest().body("Invalid user info passed.");
+        }
+
+        // create new user in db
         Account registeredUser = authenticationService.signup(registerUserDto);
 
+        // return if email is found to already exist
         if (registeredUser == null) {
             return ResponseEntity.badRequest().body("Email already exists.");
         }
+
+        // successful account creation
         return ResponseEntity.ok(registeredUser.getId() + " successfully created.");
     }
 
@@ -58,23 +66,26 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto) throws Exception {
-        System.out.println("Calling login");
+        // attempts to retrieve account from authentication service
         Account authenticatedUser = authenticationService.authenticate(loginUserDto);
-        System.out.println("Authenticated User: " + authenticatedUser);
 
+        // creates new jwt
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
+        // creates new login response
         LoginResponse loginResponse = new LoginResponse();
+
+        // sets values for login response
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
-        loginResponse.setAccount(AccountService.converAccountToDto(authenticatedUser));
+        loginResponse.setAccount(AccountService.convertAccountToDto(authenticatedUser));
 
         return ResponseEntity.ok(loginResponse);
     }
 
     @Getter
     @Setter
-    public class LoginResponse {
+    private class LoginResponse {
         private String token;
         private long expiresIn;
         Record account;

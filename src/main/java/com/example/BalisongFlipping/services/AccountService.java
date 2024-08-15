@@ -1,11 +1,8 @@
 package com.example.BalisongFlipping.services;
 
-import com.example.BalisongFlipping.dtos.AdminDto;
-import com.example.BalisongFlipping.dtos.MakerDto;
 import com.example.BalisongFlipping.dtos.UserDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 
-import com.example.BalisongFlipping.modals.accounts.Maker;
 import com.example.BalisongFlipping.modals.accounts.User;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 
@@ -18,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -39,56 +35,23 @@ public class AccountService {
      * @return              (Returns the dto of every type of account based on the role of each account
      * @throws Exception    (throws excepion based on failed update)
      */
-    public static Record converAccountToDto(Account account) throws Exception {
-        switch(account.getRole()) {
-            case ADMIN -> {
-                // returns dto of admin account
-                return new AdminDto(
-                        account.getId(),
-                        account.getEmail(),
-                        account.getRole(),
-                        account.getPosts()
-                );
-
-            }
-            case MAKER -> {
-                return new MakerDto(
-                        account.getId(),
-                        account.getEmail(),
-                        ((Maker) account).getCompanyName(),
-                        ((Maker) account).getCompanyDuration(),
-                        account.getRole(),
-                        account.getPosts(),
-                        account.getBannerImg(),
-                        account.getProfileImg(),
-                        ((Maker) account).getProducts(),
-                        ((Maker) account).getServices(),
-                        ((Maker) account).getFacebookLink(),
-                        ((Maker) account).getInstagramLink(),
-                        ((Maker) account).getTwitterLink(),
-                        ((Maker) account).getEmailLink(),
-                        ((Maker) account).getPersonalWebsiteLink()
-                );
-            }
-            case USER -> {
-                return new UserDto(
-                        account.getId(),
-                        account.getEmail(),
-                        ((User) account).getDisplayName(),
-                        account.getRole(),
-                        account.getPosts(),
-                        account.getBannerImg(),
-                        account.getProfileImg(),
-                        ((User) account).getOwnedKnives(),
-                        ((User) account).getFacebookLink(),
-                        ((User) account).getTwitterLink(),
-                        ((User) account).getInstagramLink()
-                );
-            }
-            default -> {
-                throw new Exception("Failed to convert based on role type");
-            }
-        }
+    public static Record convertAccountToDto(Account account) throws Exception {
+        return new UserDto(
+                account.getId(),
+                account.getEmail(),
+                ((User) account).getDisplayName(),
+                "USER",
+                ((User) account).getCollectionId(),
+                account.getPosts(),
+                ((User) account).getBannerImg(),
+                ((User) account).getProfileImg(),
+                ((User) account).getFacebookLink(),
+                ((User) account).getTwitterLink(),
+                ((User) account).getInstagramLink(),
+                ((User) account).getYoutubeLink(),
+                ((User) account).getDiscordLink(),
+                ((User) account).getRedditLink()
+        );
     }
 
     public Record getSelf() throws Exception {
@@ -98,7 +61,7 @@ public class AccountService {
         // get authorized account from principle
         Account currentAccount = (Account) authentication.getPrincipal();
 
-        return converAccountToDto(currentAccount);
+        return convertAccountToDto(currentAccount);
     }
 
     public List<Account> allUsers() {
@@ -135,9 +98,9 @@ public class AccountService {
 
         try {
             // checks for profile img already existing for user
-            if (!Objects.equals(foundAccount.get().getProfileImg(), "")) {
+            if (!((User) foundAccount.get()).getProfileImg().isEmpty()) {
                 // deletes old profile img
-                 if (!javaFSService.deleteAsset(foundAccount.get().getProfileImg())) {
+                 if (!javaFSService.deleteAsset(((User) foundAccount.get()).getProfileImg())) {
                      return null;
                  }
             }
@@ -146,8 +109,9 @@ public class AccountService {
             String id = javaFSService.addAsset("Profile Img",file);
 
             // updates account and saves it to repo
-            foundAccount.get().setProfileImg(id);
+            ((User) foundAccount.get()).setProfileImg(id);
             accountRepository.save(foundAccount.get());
+
             return id;
         }
         catch(Exception e) {
@@ -173,9 +137,9 @@ public class AccountService {
 
         try {
             // checks for banner img already existing for user
-            if (!Objects.equals(foundAccount.get().getBannerImg(), "")) {
+            if (!((User) foundAccount.get()).getBannerImg().isEmpty()) {
                 // deletes old profile img
-                if (!javaFSService.deleteAsset(foundAccount.get().getBannerImg())) {
+                if (!javaFSService.deleteAsset(((User) foundAccount.get()).getBannerImg())) {
                     return null;
                 }
             }
@@ -184,7 +148,7 @@ public class AccountService {
             String id = javaFSService.addAsset("Banner Img",file);
 
             // updates account and saves it to repo
-            foundAccount.get().setBannerImg(id);
+            ((User) foundAccount.get()).setBannerImg(id);
             accountRepository.save(foundAccount.get());
             return id;
         }

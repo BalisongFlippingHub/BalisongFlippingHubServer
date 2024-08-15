@@ -1,17 +1,12 @@
 package com.example.BalisongFlipping.controllers;
 
-import com.example.BalisongFlipping.dtos.FileDto;
 import com.example.BalisongFlipping.dtos.NewPostDto;
 import com.example.BalisongFlipping.dtos.PostCoverDTO;
 import com.example.BalisongFlipping.dtos.PostDto;
 import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.PostService;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.EscapedErrors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

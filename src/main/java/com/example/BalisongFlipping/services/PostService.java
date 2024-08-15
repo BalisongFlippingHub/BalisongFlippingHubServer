@@ -4,13 +4,11 @@ import com.example.BalisongFlipping.dtos.NewPostDto;
 import com.example.BalisongFlipping.dtos.PostCoverDTO;
 import com.example.BalisongFlipping.dtos.PostDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
-import com.example.BalisongFlipping.modals.accounts.Maker;
 import com.example.BalisongFlipping.modals.accounts.User;
 import com.example.BalisongFlipping.modals.posts.Post;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.example.BalisongFlipping.repositories.PostsRepository;
 import org.bson.types.ObjectId;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -67,68 +65,22 @@ public class PostService {
             throw new Exception("User Not Found");
         }
 
-        switch (account.get().getRole()) {
-            case ADMIN -> {
-                return new PostDto(
-                        p.getId(),
-                        p.getCaption(),
-                        p.getDescription(),
-                        p.isPrivate(),
-                        p.isAnnouncement(),
-                        p.isHasTimer(),
-                        p.getIdentifier(),
-                        p.getCreatorId(),
-                        "ADMIN",
-                        "",
-                        p.getCreationDate(),
-                        p.getComments(),
-                        p.getLikes(),
-                        p.getFiles()
-                );
-            }
-
-            case MAKER -> {
-                return new PostDto(
-                        p.getId(),
-                        p.getCaption(),
-                        p.getDescription(),
-                        p.isPrivate(),
-                        p.isAnnouncement(),
-                        p.isHasTimer(),
-                        p.getIdentifier(),
-                        p.getCreatorId(),
-                        ((Maker) account.get()).getCompanyName(),
-                        account.get().getProfileImg(),
-                        p.getCreationDate(),
-                        p.getComments(),
-                        p.getLikes(),
-                        p.getFiles()
-                );
-            }
-
-            case USER -> {
-                return new PostDto(
-                        p.getId(),
-                        p.getCaption(),
-                        p.getDescription(),
-                        p.isPrivate(),
-                        p.isAnnouncement(),
-                        p.isHasTimer(),
-                        p.getIdentifier(),
-                        p.getCreatorId(),
-                        ((User) account.get()).getDisplayName(),
-                        account.get().getProfileImg(),
-                        p.getCreationDate(),
-                        p.getComments(),
-                        p.getLikes(),
-                        p.getFiles()
-                );
-            }
-
-            default -> {
-                throw new Exception("User has invalid role");
-            }
-        }
+        return new PostDto(
+                p.getId(),
+                p.getCaption(),
+                p.getDescription(),
+                p.isPrivate(),
+                p.isAnnouncement(),
+                p.isHasTimer(),
+                p.getIdentifier(),
+                p.getCreatorId(),
+                ((User) account.get()).getDisplayName(),
+                ((User) account.get()).getProfileImg(),
+                p.getCreationDate(),
+                p.getComments(),
+                p.getLikes(),
+                p.getFiles()
+        );
     }
 
     public String createPost(NewPostDto newPost) throws Exception {

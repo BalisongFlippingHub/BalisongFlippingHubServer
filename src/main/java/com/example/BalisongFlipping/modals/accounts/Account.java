@@ -23,10 +23,13 @@ import java.util.List;
 @Document("accounts")
 public class Account implements UserDetails {
 
-    public enum Role {
-        USER,
-        ADMIN,
-        MAKER
+    // constructors
+    public Account(String email, String password) {
+        this.email = email;
+        this.password = password;
+        accountCreationDate = new Date();
+        lastLogin = new Date();
+        posts = new ArrayList<>();
     }
 
     // members
@@ -36,34 +39,13 @@ public class Account implements UserDetails {
     @Indexed(unique = true)
     private String email;
 
+    private String role;
+
     private String password;
     private Date accountCreationDate;
     private Date lastLogin;
-    private Role role;
 
     private List<String> posts;
-
-    private String profileImg;
-    private String bannerImg;
-
-    public Account(String email, String password, Date accountCreationDate, Date lastLogin, Role role) {
-        this.email = email;
-        this.password = password;
-        this.accountCreationDate = accountCreationDate;
-        this.lastLogin = lastLogin;
-        this.role = role;
-        this.posts = new ArrayList<String>();
-    }
-
-    public Account(Account account) {
-        this.id = account.getId();
-        this.email = account.getEmail();
-        this.password = account.getPassword();
-        this.accountCreationDate = account.getAccountCreationDate();
-        this.lastLogin = account.lastLogin;
-        this.role = account.getRole();
-        this.posts = account.getPosts();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
