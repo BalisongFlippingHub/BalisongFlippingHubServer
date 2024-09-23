@@ -42,7 +42,6 @@ public class AccountService {
                 ((User) account).getDisplayName(),
                 "USER",
                 ((User) account).getCollectionId(),
-                account.getPosts(),
                 ((User) account).getBannerImg(),
                 ((User) account).getProfileImg(),
                 ((User) account).getFacebookLink(),

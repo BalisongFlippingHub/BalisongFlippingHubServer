@@ -9,7 +9,6 @@ public record UserDto(
         String displayName,
         String role,
         String collectionId,
-        List<String> posts,
         String bannerImg,
         String profileImg,
         String facebookLink,

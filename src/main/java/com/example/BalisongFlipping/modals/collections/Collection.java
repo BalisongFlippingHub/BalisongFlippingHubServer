@@ -1,5 +1,6 @@
 package com.example.BalisongFlipping.modals.collections;
 
+import com.example.BalisongFlipping.modals.collectionKnives.CollectionKnife;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Collection {
         this.userId = userId;
         bannerImg = "";
         posts = new ArrayList<>();
+        collectedKnives = new ArrayList<>();
     }
 
     @Id
@@ -34,5 +36,5 @@ public class Collection {
 
     private List<String> posts;
 
-
+    private List<String> collectedKnives;
 }

@@ -9,10 +9,8 @@ import com.example.BalisongFlipping.services.JwtService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/auth")
 @RestController
@@ -24,6 +22,12 @@ public class AuthController {
     public AuthController(JwtService jwtService, AuthService authenticationService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+    }
+
+    @GetMapping("/check-token")
+    public ResponseEntity<?> checkToken(@RequestParam String token) {
+
+        return ResponseEntity.ok("token valid");
     }
 
     /**
