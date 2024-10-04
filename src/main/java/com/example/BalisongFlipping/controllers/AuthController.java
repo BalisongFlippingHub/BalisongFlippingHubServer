@@ -1,6 +1,7 @@
 package com.example.BalisongFlipping.controllers;
 
 import com.example.BalisongFlipping.dtos.LoginAccountDto;
+import com.example.BalisongFlipping.dtos.LoginResponseDto;
 import com.example.BalisongFlipping.dtos.RegisterAccountDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.modals.tokens.RefreshToken;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -75,39 +77,30 @@ public class AuthController {
      * - Translation... attempts to log in a user by checking user credentials and jwt passed
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> authenticate(@RequestBody LoginAccountDto loginUserDto, HttpServletResponse response) throws Exception {
         // attempts to retrieve account from authentication service
-        Account authenticatedUser = authenticationService.authenticate(loginUserDto);
+        try {
+            Account authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-        // creates new access token
-        String accessToken = jwtService.generateAccessToken(authenticatedUser);
+            // creates new access token
+            String accessToken = jwtService.generateAccessToken(authenticatedUser);
 
-        // create new refresh token
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginUserDto.email());
+            // create new refresh token
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginUserDto.email());
 
-        // set refresh token in cookie
-        Cookie refreshTokenCookie = new Cookie("refreshTokenCookie", refreshToken.getToken());
-        refreshTokenCookie.isHttpOnly();
-        refreshTokenCookie.setSecure(true);
+            // set refresh token in cookie
+            Cookie refreshTokenCookie = new Cookie("refreshTokenCookie", refreshToken.getToken());
+            refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setHttpOnly(true);
 
-        response.addCookie(refreshTokenCookie);
+            // add cookie to response body
+            response.addCookie(refreshTokenCookie);
 
-        // creates new login response
-        LoginResponse loginResponse = new LoginResponse();
-
-        // sets values for login response
-        loginResponse.setToken(accessToken);
-        loginResponse.setExpiresIn(jwtService.getExpirationTime());
-        loginResponse.setAccount(AccountService.convertAccountToDto(authenticatedUser));
-
-        return ResponseEntity.ok(loginResponse);
-    }
-
-    @Getter
-    @Setter
-    private class LoginResponse {
-        private String token;
-        private long expiresIn;
-        Record account;
+            // return account info with access token
+            return new ResponseEntity<>(new LoginResponseDto(accessToken, jwtService.getExpirationTime(), AccountService.convertAccountToDto(authenticatedUser)), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>("Failed: " + e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 }
