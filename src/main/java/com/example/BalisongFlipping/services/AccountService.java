@@ -35,7 +35,7 @@ public class AccountService {
      * @return              (Returns the dto of every type of account based on the role of each account
      * @throws Exception    (throws excepion based on failed update)
      */
-    public static Record convertAccountToDto(Account account) throws Exception {
+    public static UserDto convertAccountToDto(Account account) throws Exception {
         return new UserDto(
                 account.getId(),
                 account.getEmail(),
@@ -53,7 +53,7 @@ public class AccountService {
         );
     }
 
-    public Record getSelf() throws Exception {
+    public UserDto getSelf() throws Exception {
         // get authentication context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -69,6 +69,62 @@ public class AccountService {
         accounts = accountRepository.findAll();
 
         return accounts;
+    }
+
+    private boolean validateDisplayName(String newDisplayName) {
+        // return false if empty string
+        System.out.println(newDisplayName);
+        if (newDisplayName.isEmpty()) return false;
+
+        // return false if passed string is smaller than 4 characters
+        if (newDisplayName.length() < 4) return false;
+
+        int numLetters = 0;
+        int numNumbers = 0;
+
+        for (int i = 0; i < newDisplayName.length(); i++) {
+            // if character isn't a valid character, letter, or number, return false
+            if (!Character.isDigit(newDisplayName.charAt(i)) && !Character.isLetter(newDisplayName.charAt(i)) && newDisplayName.charAt(i) != '_') return false;
+
+            if (Character.isLetter(newDisplayName.charAt(i))) {
+                numLetters += 1;
+            }
+            else if (Character.isDigit(newDisplayName.charAt(i))) {
+                numNumbers += 1;
+            }
+        }
+
+        if (numNumbers > numLetters) return false;
+
+        if (numLetters == 0) return false;
+
+        return true;
+    }
+
+    public String changeDisplayName(String accountID, String newDisplayName) throws Exception {
+        try {
+            // get object
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountID));
+
+            // check if it is empty
+            if (foundAccount.isEmpty()) {
+                throw new Exception("Couldn't find account.");
+            }
+
+            // validate new display name
+            if (!validateDisplayName(newDisplayName)) {
+                throw new Exception("Display name not valid.");
+            }
+
+            User accountObj = ((User) foundAccount.get());
+            accountObj.setDisplayName(newDisplayName);
+            accountRepository.save(accountObj);
+
+            return newDisplayName;
+        }
+        catch (Exception e) {
+            throw e;
+        }
     }
 
     /***

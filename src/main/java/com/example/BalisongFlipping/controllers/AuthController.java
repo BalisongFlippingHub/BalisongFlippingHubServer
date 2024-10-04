@@ -3,9 +3,13 @@ package com.example.BalisongFlipping.controllers;
 import com.example.BalisongFlipping.dtos.LoginAccountDto;
 import com.example.BalisongFlipping.dtos.RegisterAccountDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
+import com.example.BalisongFlipping.modals.tokens.RefreshToken;
 import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.AuthService;
 import com.example.BalisongFlipping.services.JwtService;
+import com.example.BalisongFlipping.services.RefreshTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AuthController {
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     private final AuthService authenticationService;
 
-    public AuthController(JwtService jwtService, AuthService authenticationService) {
+    public AuthController(JwtService jwtService, RefreshTokenService refreshTokenService, AuthService authenticationService) {
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
         this.authenticationService = authenticationService;
     }
 
@@ -69,18 +75,28 @@ public class AuthController {
      * - Translation... attempts to log in a user by checking user credentials and jwt passed
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto) throws Exception {
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginAccountDto loginUserDto, HttpServletResponse response) throws Exception {
         // attempts to retrieve account from authentication service
         Account authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-        // creates new jwt
-        String jwtToken = jwtService.generateToken(authenticatedUser);
+        // creates new access token
+        String accessToken = jwtService.generateAccessToken(authenticatedUser);
+
+        // create new refresh token
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginUserDto.email());
+
+        // set refresh token in cookie
+        Cookie refreshTokenCookie = new Cookie("refreshTokenCookie", refreshToken.getToken());
+        refreshTokenCookie.isHttpOnly();
+        refreshTokenCookie.setSecure(true);
+
+        response.addCookie(refreshTokenCookie);
 
         // creates new login response
         LoginResponse loginResponse = new LoginResponse();
 
         // sets values for login response
-        loginResponse.setToken(jwtToken);
+        loginResponse.setToken(accessToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
         loginResponse.setAccount(AccountService.convertAccountToDto(authenticatedUser));
 

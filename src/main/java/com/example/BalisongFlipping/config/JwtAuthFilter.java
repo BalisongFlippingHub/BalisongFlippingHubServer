@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -41,23 +42,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
-            final String jwt = authHeader.substring(7);
-            final String userEmail = jwtService.extractUsername(jwt);
+            // get access token from auth
+            String accessToken = getAccessToken(request);
 
+            // check if auth failed
+            if (accessToken.isEmpty()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // get user email with access token
+            final String userEmail = jwtService.extractUsername(accessToken);
+
+            // get auth object
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+            // if auth object matches user email in user details
             if (userEmail != null && authentication == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-                if (jwtService.isTokenValid(jwt, userDetails)) {
+                // check if access token is valid
+                if (jwtService.isAccessTokenValid(accessToken, userDetails)) {
+                    System.out.println("Token is valid.");
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -67,11 +74,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
+                else {
+                    // check for refresh token
+
+                }
             }
 
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
+            // set response status to 403 for unauthorized
+            response.setStatus(403);
+            response.getWriter().println(exception.getMessage());
+            // handle exception
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
+    }
+
+    private String getAccessToken(HttpServletRequest request) {
+        // check for empty or invalid header
+
+        if (request.getHeader("Authorization") == null)
+            return "";
+
+        if (!request.getHeader("Authorization").startsWith("Bearer "))
+            return "";
+
+        return request.getHeader("Authorization").substring(7);
     }
 }

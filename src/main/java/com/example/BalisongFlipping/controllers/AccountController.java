@@ -1,4 +1,5 @@
 package com.example.BalisongFlipping.controllers;
+import com.example.BalisongFlipping.dtos.UserDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.services.AccountService;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,24 @@ public class AccountController {
        else {
            return ResponseEntity.ok(account);
        }
+   }
+
+   @PostMapping("/me/change-display-name")
+   public ResponseEntity<?> changeUsersDisplayName(@RequestBody String newDisplayName) throws Exception {
+        String accountId =  accountService.getSelf().id();
+        newDisplayName = newDisplayName.substring(0, newDisplayName.length() - 1);
+
+        if (accountId.isEmpty()) {
+            return new ResponseEntity<>("Failed to get account info", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.changeDisplayName(accountId, newDisplayName), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>("Failed", HttpStatus.CONFLICT);
+        }
    }
 
    @PostMapping(value = "/me/update-profile-img", consumes = "multipart/form-data")
@@ -62,10 +81,11 @@ public class AccountController {
         return new ResponseEntity<String>(imgId, HttpStatus.OK);
     }
 
-   @GetMapping("/")
-    public ResponseEntity<List<Account>> allUsers() {
+   @GetMapping("/me/all")
+    public ResponseEntity<?> allUsers() {
+       System.out.println("Called.");
        List<Account> accounts = accountService.allUsers();
 
-       return ResponseEntity.ok(accounts);
+       return ResponseEntity.ok("Test");
    }
 }
