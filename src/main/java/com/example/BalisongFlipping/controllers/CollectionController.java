@@ -4,6 +4,7 @@ import com.example.BalisongFlipping.dtos.CollectionDataDto;
 import com.example.BalisongFlipping.modals.collectionKnives.CollectionKnife;
 import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.CollectionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class CollectionController {
     private final CollectionService collectionService;
+
+    @Autowired
+    private AccountService accountService;
 
     public CollectionController(CollectionService collectionService) {
         this.collectionService = collectionService;
@@ -30,7 +34,8 @@ public class CollectionController {
     }
 
     @PostMapping(value = "/me/update-banner-image", consumes = "multipart/form-data")
-    public ResponseEntity<String> updateBannerImg(@RequestParam("collectionId") String collectionId, @RequestParam("file") MultipartFile file) throws Exception {
+    public ResponseEntity<String> updateBannerImg(@RequestParam("file") MultipartFile file) throws Exception {
+        String collectionId =  accountService.getSelf().collectionId();
 
         if (!collectionService.checkForCollectionExistance(collectionId)) {
             return new ResponseEntity<>("Collection doesn't exist", HttpStatus.NOT_FOUND);
@@ -47,7 +52,6 @@ public class CollectionController {
 
     @PostMapping(value = "/me/add-knife", consumes = "multipart/form-data")
     public ResponseEntity<?> addKnifeToCollection(
-            @RequestParam("collectionID") String collectionID,
             @RequestParam("displayName") String displayName,
             @RequestParam("knifeMaker") String knifeMaker,
             @RequestParam("baseKnifeModel") String baseKnifeModel,
@@ -80,6 +84,8 @@ public class CollectionController {
     ) throws Exception {
         System.out.println("Adding new Knife");
         // check for collection existance
+        String collectionID =  accountService.getSelf().collectionId();
+
         if (!collectionService.checkForCollectionExistance(collectionID)) {
             return new ResponseEntity<>("Collection doesn't exist", HttpStatus.NOT_FOUND);
         }
