@@ -36,6 +36,9 @@ public class AccountService {
      * @throws Exception    (throws excepion based on failed update)
      */
     public static UserDto convertAccountToDto(Account account) throws Exception {
+        if (account == null)
+            throw new Exception("Passed account is null.");
+
         return new UserDto(
                 account.getId(),
                 account.getEmail(),
@@ -51,6 +54,10 @@ public class AccountService {
                 ((User) account).getDiscordLink(),
                 ((User) account).getRedditLink()
         );
+    }
+
+    public Account getAccount(String accountId) throws Exception {
+        return accountRepository.findById(new ObjectId(accountId)).get();
     }
 
     public UserDto getSelf() throws Exception {

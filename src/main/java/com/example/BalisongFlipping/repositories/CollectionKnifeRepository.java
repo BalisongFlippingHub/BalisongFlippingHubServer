@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CollectionKnifeRepository extends MongoRepository<CollectionKnife, String> {
 
     Optional<List<CollectionKnife>> findAllByCollectionId(String collectionId);
+
 }

@@ -47,6 +47,14 @@ public class CollectionService {
         return convertCollectionToDTO(foundCollection.get());
     }
 
+    public CollectionDataDto getCollectionByAccountId(String accountId) {
+        Optional<Collection> foundCollection = collectionRepository.findByUserId(accountId);
+
+        if (foundCollection.isEmpty()) return null;
+
+        return convertCollectionToDTO(foundCollection.get());
+    }
+
     public boolean checkForCollectionExistance(String collectionId) {
         Optional<Collection> collection = collectionRepository.findById(collectionId);
 
