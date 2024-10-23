@@ -1,9 +1,12 @@
 package com.example.BalisongFlipping.controllers;
+import com.example.BalisongFlipping.dtos.UpdateLinkDTO;
 import com.example.BalisongFlipping.dtos.UserDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.services.AccountService;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -81,6 +84,142 @@ public class AccountController {
         }
 
         return new ResponseEntity<String>(imgId, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/me/update-facebook-link")
+    public ResponseEntity<?> updateFacebookLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updateFacebookLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-instagram-link")
+    public ResponseEntity<?> updateInstagramLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updateInstagramLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-twitter-link")
+    public ResponseEntity<?> updateTwitterLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updateTwitterLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-youtube-link")
+    public ResponseEntity<?> updateYoutubeLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updateYoutubeLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-reddit-link")
+    public ResponseEntity<?> updateRedditLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updateRedditLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-discord-link")
+    public ResponseEntity<?> updateDiscordLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updateDiscordLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-personal-email-link")
+    public ResponseEntity<?> updatePersonalEmailLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updatePersonalEmailLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/me/update-personal-website-link")
+    public ResponseEntity<?> updatePersonalWebsiteLink(@RequestBody UpdateLinkDTO updateLinkDTO) throws Exception {
+        String accountId =  accountService.getSelf().id();
+
+        if (accountService.checkForAccountExistance(accountId)) {
+            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            return new ResponseEntity<>(accountService.updatePersonalWebsiteLink(updateLinkDTO.newLink(), accountId), HttpStatus.OK);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
    @GetMapping("/me/all")

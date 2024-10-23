@@ -16,5 +16,7 @@ public record UserDto(
         String instagramLink,
         String youtubeLink,
         String discordLink,
-        String redditLink
+        String redditLink,
+        String personalEmailLink,
+        String personalWebsiteLink
 ){}

@@ -52,7 +52,9 @@ public class AccountService {
                 ((User) account).getInstagramLink(),
                 ((User) account).getYoutubeLink(),
                 ((User) account).getDiscordLink(),
-                ((User) account).getRedditLink()
+                ((User) account).getRedditLink(),
+                ((User) account).getPersonalEmailLink(),
+                ((User) account).getPersonalWebsiteLink()
         );
     }
 
@@ -106,6 +108,166 @@ public class AccountService {
         if (numLetters == 0) return false;
 
         return true;
+    }
+
+    public String updateFacebookLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setFacebookLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updateInstagramLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setInstagramLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updateTwitterLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setTwitterLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updateYoutubeLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setYoutubeLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updateRedditLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setRedditLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updateDiscordLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setDiscordLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updatePersonalEmailLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setPersonalEmailLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String updatePersonalWebsiteLink(String newLink, String accountId) throws Exception {
+        try {
+
+
+            Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
+
+            if (foundAccount.isEmpty()) throw new Exception("Account Not Found.");
+
+            User castedAccount = (User) foundAccount.get();
+
+            castedAccount.setPersonalWebsiteLink(newLink);
+            accountRepository.save(castedAccount);
+
+            return newLink;
+        }
+        catch (Exception e) {
+            throw e;
+        }
     }
 
     public String changeDisplayName(String accountID, String newDisplayName) throws Exception {

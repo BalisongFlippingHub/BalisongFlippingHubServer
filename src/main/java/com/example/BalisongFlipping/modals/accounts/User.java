@@ -27,6 +27,8 @@ public class User extends Account {
         youtubeLink = "";
         discordLink = "";
         redditLink = "";
+        personalEmailLink = "";
+        personalWebsiteLink = "";
     }
 
     private String displayName;
@@ -40,6 +42,7 @@ public class User extends Account {
     private String youtubeLink;
     private String discordLink;
     private String redditLink;
-
+    private String personalEmailLink;
+    private String personalWebsiteLink;
 
 }
