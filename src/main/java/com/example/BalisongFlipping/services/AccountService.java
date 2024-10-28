@@ -27,7 +27,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private static  JavaFSService javaFSService;
+    private JavaFSService javaFSService;
 
     public String generateIdentifierCode(String displayName) {
         StringBuilder identifier = new StringBuilder();
@@ -398,18 +398,18 @@ public class AccountService {
      * Function takes in an image and an id to identify the account a user wannts to update the babber image on,
      * then attempts to update that banner image on the db for that user.
      */
-    public String updateBannerImg(String accountId, MultipartFile file) {
+    public String updateBannerImg(String accountId, MultipartFile file) throws Exception {
         Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountId));
 
         // if account isn't found with passed id, return false
-        if (foundAccount.isEmpty()) return null;
+        if (foundAccount.isEmpty()) throw new Exception("Can't find account.");
 
         try {
             // checks for banner img already existing for user
             if (!((User) foundAccount.get()).getBannerImg().isEmpty()) {
                 // deletes old profile img
                 if (!javaFSService.deleteAsset(((User) foundAccount.get()).getBannerImg())) {
-                    return null;
+                    throw new Exception("Conflict during update.");
                 }
             }
 
@@ -423,7 +423,7 @@ public class AccountService {
         }
         catch(Exception e) {
             // catches exception during updating process
-            return null;
+            throw e;
         }
     }
 }

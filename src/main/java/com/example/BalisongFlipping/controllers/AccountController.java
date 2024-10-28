@@ -71,19 +71,18 @@ public class AccountController {
 
     @PostMapping(value = "/me/update-banner-img", consumes = "multipart/form-data")
     public ResponseEntity<String> updateBannerImg(@RequestParam("file") MultipartFile file) throws Exception {
-        String accountId =  accountService.getSelf().id();
+       try {
+           String accountId =  accountService.getSelf().id();
 
-        if (accountService.checkForAccountExistance(accountId)) {
-            return new ResponseEntity<>("User doesn't exist", HttpStatus.NOT_FOUND);
-        }
+           if (accountService.checkForAccountExistance(accountId)) {
+               throw new Exception("Can't find account.");
+           }
 
-        String imgId = accountService.updateBannerImg(accountId, file);
-
-        if (imgId.isEmpty()) {
-            return new ResponseEntity<>("Failed to store img", HttpStatus.CONFLICT);
-        }
-
-        return new ResponseEntity<String>(imgId, HttpStatus.OK);
+           return new ResponseEntity<String>(accountService.updateBannerImg(accountId, file), HttpStatus.OK);
+       }
+       catch(Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+       }
     }
 
     @PostMapping(value = "/me/update-facebook-link")
