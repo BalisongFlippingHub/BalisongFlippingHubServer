@@ -7,11 +7,13 @@ import com.example.BalisongFlipping.modals.accounts.User;
 import com.example.BalisongFlipping.modals.collections.Collection;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.example.BalisongFlipping.repositories.CollectionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,9 @@ public class AuthService {
     // object to access mongo db repo containing all accounts
     private final AccountRepository accountRepository;
     private final CollectionRepository collectionRepository;
+
+    @Autowired
+    private AccountService accountService;
 
     // object for password encoder
     private final PasswordEncoder passwordEncoder;
@@ -59,7 +64,8 @@ public class AuthService {
         return new User(
                 newUser.email(),
                 passwordEncoder.encode(newUser.password()),
-                newUser.displayName()
+                newUser.displayName(),
+                accountService.generateIdentifierCode(newUser.displayName())
         );
     }
 

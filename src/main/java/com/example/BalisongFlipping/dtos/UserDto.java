@@ -7,6 +7,7 @@ public record UserDto(
         String id,
         String email,
         String displayName,
+        String identifierCode,
         String role,
         String collectionId,
         String bannerImg,

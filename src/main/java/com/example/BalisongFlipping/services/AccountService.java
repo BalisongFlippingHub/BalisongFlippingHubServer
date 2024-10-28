@@ -1,5 +1,6 @@
 package com.example.BalisongFlipping.services;
 
+import com.example.BalisongFlipping.dtos.DisplayNameChangeDto;
 import com.example.BalisongFlipping.dtos.UserDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 
@@ -8,6 +9,7 @@ import com.example.BalisongFlipping.repositories.AccountRepository;
 
 import org.bson.types.ObjectId;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,17 +18,49 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.Random;
 
 
 @Service
 public class AccountService {
-    private final AccountRepository accountRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private static  JavaFSService javaFSService;
 
-    public AccountService(AccountRepository accountRepository, JavaFSService javaFSService) {
-        this.accountRepository = accountRepository;
-        this.javaFSService = javaFSService;
+    public String generateIdentifierCode(String displayName) {
+        StringBuilder identifier = new StringBuilder();
+
+        do {
+            if (!identifier.isEmpty())
+                identifier.delete(0, identifier.length());
+
+            Random rand = new Random();
+            for (int i = 0; i < 4; i++) {
+                // generate random number and append to string
+                int num = rand.nextInt(10);
+                identifier.append(String.valueOf(num));
+            }
+        } while (!validateGeneratedIdentifierCode(String.valueOf(identifier), displayName));
+
+        return identifier.toString();
+    }
+
+    private boolean validateGeneratedIdentifierCode(String identifierCode, String displayName) {
+        // get list of accounts already created with passed display name
+        List<User> foundAccounts = accountRepository.findAllByDisplayName(displayName);
+
+        // return true for empty list with passed display name
+        if (foundAccounts.isEmpty()) return true;
+
+        // loop through acounts to check identifier codes
+        for (User account: foundAccounts) {
+            if (account.getIdentifierCode().equals(identifierCode)) return false;
+        }
+
+        // return true validation if no codes match the passed code
+        return true;
     }
 
     /***
@@ -43,6 +77,7 @@ public class AccountService {
                 account.getId(),
                 account.getEmail(),
                 ((User) account).getDisplayName(),
+                ((User) account).getIdentifierCode(),
                 "USER",
                 ((User) account).getCollectionId(),
                 ((User) account).getBannerImg(),
@@ -270,7 +305,7 @@ public class AccountService {
         }
     }
 
-    public String changeDisplayName(String accountID, String newDisplayName) throws Exception {
+    public DisplayNameChangeDto changeDisplayName(String accountID, String newDisplayName) throws Exception {
         try {
             // get object
             Optional<Account> foundAccount = accountRepository.findById(new ObjectId(accountID));
@@ -285,11 +320,21 @@ public class AccountService {
                 throw new Exception("Display name not valid.");
             }
 
+            // set new display name in account obj
             User accountObj = ((User) foundAccount.get());
             accountObj.setDisplayName(newDisplayName);
+
+            // set new identifier code in account obj
+            String newIdentifier = generateIdentifierCode(newDisplayName);
+            accountObj.setIdentifierCode(newIdentifier);
+
+            // save account
             accountRepository.save(accountObj);
 
-            return newDisplayName;
+            return new DisplayNameChangeDto(
+                    newDisplayName,
+                    newIdentifier
+            );
         }
         catch (Exception e) {
             throw e;

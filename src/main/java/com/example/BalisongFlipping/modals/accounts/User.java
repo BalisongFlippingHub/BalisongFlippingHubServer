@@ -11,10 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User extends Account {
 
-    public User(String email, String password, String displayName) {
+    public User(String email, String password, String displayName, String identifierCode) {
         super(email, password);
 
         this.displayName = displayName;
+        this.identifierCode = identifierCode;
         profileImg = "";
         bannerImg = "";
         collectionId = "";
@@ -32,6 +33,7 @@ public class User extends Account {
     }
 
     private String displayName;
+    private String identifierCode;
     private String profileImg;
     private String bannerImg;
     private String collectionId;

@@ -33,7 +33,7 @@ public class CollectionController {
         return new ResponseEntity<CollectionDataDto>(foundCollection, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/me/update-banner-image", consumes = "multipart/form-data")
+    @PostMapping(value = "/me/update-banner-img", consumes = "multipart/form-data")
     public ResponseEntity<String> updateBannerImg(@RequestParam("file") MultipartFile file) throws Exception {
         String collectionId =  accountService.getSelf().collectionId();
 
