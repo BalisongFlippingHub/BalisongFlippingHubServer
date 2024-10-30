@@ -67,6 +67,20 @@ public class CollectionService {
         return true;
     }
 
+    public boolean checkForDuplicateDisplayName(String displayName, String collectionID) throws Exception {
+        Optional<Collection> foundCollection = collectionRepository.findById(collectionID);
+
+        for (String knifeId: foundCollection.get().getCollectedKnives()) {
+            Optional<CollectionKnife> foundKnife = collectionKnifeRepository.findById(knifeId);
+
+            if (foundKnife.isPresent()) {
+                if (foundKnife.get().getDisplayName().equals(displayName)) return true;
+            }
+        }
+
+        return false;
+    }
+
     public CollectionKnife addNewKnife(
             String collectionID,
             String displayName,

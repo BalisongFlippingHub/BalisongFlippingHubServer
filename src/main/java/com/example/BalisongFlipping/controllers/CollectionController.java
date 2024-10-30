@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.naming.ldap.Rdn;
+
 @RequestMapping("/collection")
 @RestController
 public class CollectionController {
@@ -94,6 +96,9 @@ public class CollectionController {
         if (!collectionService.validateNewKnifeInfo(displayName, knifeMaker, baseKnifeModel, knifeType, aqquiredDate, coverPhoto)) {
             return new ResponseEntity<>("Invalid Info Passed", HttpStatus.CONFLICT);
         }
+
+        // checks for duplicate display name
+        if (collectionService.checkForDuplicateDisplayName(displayName, collectionID)) return new ResponseEntity<>("Duplicate Display Name.", HttpStatus.CONFLICT);
 
         // attempt to create object and store in db
         try {
