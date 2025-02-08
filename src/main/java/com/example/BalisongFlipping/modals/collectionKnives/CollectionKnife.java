@@ -1,6 +1,6 @@
 package com.example.BalisongFlipping.modals.collectionKnives;
 
-import com.example.BalisongFlipping.enums.*;
+import com.example.BalisongFlipping.enums.knives.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,7 +61,7 @@ public class CollectionKnife {
     private String durabilityScore;
 
     // gallery images/videos
-    List<String> galleryFiles;
+    List<GalleryFile> galleryFiles;
 
     // state values
     private boolean hasBeenSold;
@@ -99,7 +99,7 @@ public class CollectionKnife {
             String qualityScore,
             String soundScore,
             String durabilityScore,
-            List<String> galleryFiles
+            List<GalleryFile> galleryFiles
     ) {
         setCollectionId(collectionId);
         setDisplayName(displayName);

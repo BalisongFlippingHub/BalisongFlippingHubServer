@@ -43,7 +43,7 @@ public class SecurityFilterConfig {
 
         http.authorizeHttpRequests((auth) -> {
             auth
-                    .requestMatchers("/auth/**", "/tutorials", "/file/**", "/posts/any/**", "/collection/any/**")
+                    .requestMatchers("/auth/**", "/tutorials", "/file/**", "/posts/any/**", "/collection/any/**", "/actuator/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated();

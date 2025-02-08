@@ -2,9 +2,12 @@ package com.example.BalisongFlipping.services;
 
 import com.example.BalisongFlipping.dtos.CollectionDataDto;
 import com.example.BalisongFlipping.modals.collectionKnives.CollectionKnife;
+import com.example.BalisongFlipping.modals.collectionKnives.GalleryFile;
 import com.example.BalisongFlipping.modals.collections.Collection;
+import com.example.BalisongFlipping.modals.posts.CollectionTimelinePost;
 import com.example.BalisongFlipping.repositories.CollectionKnifeRepository;
 import com.example.BalisongFlipping.repositories.CollectionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +20,9 @@ public class CollectionService {
     private final CollectionRepository collectionRepository;
     private final CollectionKnifeRepository collectionKnifeRepository;
     private static  JavaFSService javaFSService;
+
+    @Autowired
+    private PostService postService;
 
     public CollectionService(CollectionRepository collectionRepository, CollectionKnifeRepository collectionKnifeRepository, JavaFSService javaFSService) {
         this.collectionRepository = collectionRepository;
@@ -81,6 +87,13 @@ public class CollectionService {
         return false;
     }
 
+    private CollectionTimelinePost createAddKnifeTimelinePost(String accountId, String collectionKnifeId) throws Exception {
+        CollectionTimelinePost newTimelinePost = new CollectionTimelinePost();
+
+
+        return newTimelinePost;
+    }
+
     public CollectionKnife addNewKnife(
             String collectionID,
             String displayName,
@@ -113,18 +126,11 @@ public class CollectionService {
             String durabilityScore,
             MultipartFile[] galleryFiles
     ) throws Exception {
-        // process cover photo
         try {
+            // cover photo
             String coverPhotoStr = javaFSService.addAsset("cover photo", coverPhoto);
 
-            List<String> galleryFilesStr = new ArrayList<String>();
-
-            if (galleryFiles != null) {
-                for (MultipartFile galleryFile : galleryFiles) {
-                    galleryFilesStr.add(javaFSService.addAsset("gallery file", galleryFile));
-                }
-            }
-
+            // create new knife obj
             CollectionKnife newKnife = new CollectionKnife(
                     collectionID,
                     displayName,
@@ -155,22 +161,51 @@ public class CollectionService {
                     qualityScore,
                     soundScore,
                     durabilityScore,
-                    galleryFilesStr
+                   null
             );
 
+            // get collection from repo
             Optional<Collection> foundCollection = collectionRepository.findById(collectionID);
 
+            // check for failed aqquisition of collection from repo
             if (foundCollection.isEmpty())
                 throw new Exception("Couldn't Find Collection");
 
+            // save new knife obj to repo to get id
             newKnife = collectionKnifeRepository.save(newKnife);
+
+            // process gallery files
+            List<String> galleryFileStrings = new ArrayList<>();
+            if (galleryFiles != null) {
+                for (MultipartFile file: galleryFiles) {
+                    String fileId = javaFSService.addAsset("gallery file", file);
+                    galleryFileStrings.add(fileId);
+                }
+            }
+
+            // create collection timeline post
+            CollectionTimelinePost newPost = postService.createAddKnifeCollectionTimelinePost(foundCollection.get().getUserId(), newKnife, galleryFileStrings);
+
+            // update knife obj with gallery
+            List<GalleryFile> gallery = new ArrayList<>();
+            for (String fileId: galleryFileStrings) {
+                gallery.add(new GalleryFile(fileId, newPost.getId()));
+            }
+
+            newKnife.setGalleryFiles(gallery);
+
+            // update new knife obj in repo
+            newKnife = collectionKnifeRepository.save(newKnife);
+
+            // update collection array of collected knives
             List<String> updatedArr = foundCollection.get().getCollectedKnives();
-
             updatedArr.add(newKnife.getId());
-
             foundCollection.get().setCollectedKnives(updatedArr);
+
+            // update collection in repo
             collectionRepository.save(foundCollection.get());
 
+            // return newly saved collection knife
             return newKnife;
         }
         catch (Exception e) {

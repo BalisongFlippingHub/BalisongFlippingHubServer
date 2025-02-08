@@ -2,8 +2,10 @@ package com.example.BalisongFlipping.controllers;
 
 import com.example.BalisongFlipping.dtos.CollectionDataDto;
 import com.example.BalisongFlipping.modals.collectionKnives.CollectionKnife;
+import com.example.BalisongFlipping.modals.collections.Collection;
 import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.CollectionService;
+import com.example.BalisongFlipping.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.naming.ldap.Rdn;
+import java.util.Optional;
 
 @RequestMapping("/collection")
 @RestController
@@ -20,8 +23,23 @@ public class CollectionController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private PostService postService;
+
     public CollectionController(CollectionService collectionService) {
         this.collectionService = collectionService;
+    }
+
+    @GetMapping(value = "/any/{collectionId}/get-posts")
+    public ResponseEntity<?> getCollectionPosts(@PathVariable("collectionId") String collectionId) throws Exception {
+        try {
+            CollectionDataDto foundCollection = collectionService.getCollection(collectionId);
+
+            return new ResponseEntity<>(postService.getCollectionTimelinePosts(foundCollection.accountId()), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
     @GetMapping(value = "/any/{collectionId}")

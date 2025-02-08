@@ -1,4 +1,4 @@
-package com.example.BalisongFlipping.enums;
+package com.example.BalisongFlipping.enums.knives;
 
 public enum HandleMaterial {
     TITANIUM,

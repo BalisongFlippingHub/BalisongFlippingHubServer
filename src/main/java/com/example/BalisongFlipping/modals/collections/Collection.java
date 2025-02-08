@@ -22,7 +22,6 @@ public class Collection {
     public Collection(String userId) {
         this.userId = userId;
         bannerImg = "";
-        posts = new ArrayList<>();
         collectedKnives = new ArrayList<>();
     }
 
@@ -33,8 +32,6 @@ public class Collection {
     private String userId;
 
     private String bannerImg;
-
-    private List<String> posts;
 
     private List<String> collectedKnives;
 }
