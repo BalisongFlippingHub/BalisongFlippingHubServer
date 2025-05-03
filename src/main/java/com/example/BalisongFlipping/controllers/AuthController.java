@@ -48,6 +48,19 @@ public class AuthController {
         return ResponseEntity.ok("token valid");
     }
 
+    @GetMapping("/verify-email-token/{token}")
+    public ResponseEntity<?> verifyEmailToken(@PathVariable String token) throws Exception {
+
+        log.trace("Accessing verification end point with token: " + token);
+        
+        if (authenticationService.validateEmailVerification(token)) {
+            return new ResponseEntity<>("Success", HttpStatus.ACCEPTED);
+        }
+        else {
+            return new ResponseEntity<>("Verification Failed", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     /**
      *
      * @param registerUserDto
@@ -60,21 +73,27 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterAccountDto registerUserDto) {
-        // validate new user info
-        if (!authenticationService.validateNewUser(registerUserDto)) {
-            return ResponseEntity.badRequest().body("Invalid user info passed.");
+        try {
+            // validate new user info
+            if (!authenticationService.validateNewUser(registerUserDto)) {
+                return ResponseEntity.badRequest().body("Invalid user info passed.");
+            }
+
+            // create new user in db
+            Account registeredUser = authenticationService.signup(registerUserDto);
+
+            // return if email is found to already exist
+            if (registeredUser == null) {
+                return ResponseEntity.badRequest().body("Email already exists.");
+            }
+
+            // successful account creation
+            return ResponseEntity.ok(registeredUser.getId() + " successfully created.");
         }
-
-        // create new user in db
-        Account registeredUser = authenticationService.signup(registerUserDto);
-
-        // return if email is found to already exist
-        if (registeredUser == null) {
-            return ResponseEntity.badRequest().body("Email already exists.");
+        catch (Exception e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT); 
         }
-
-        // successful account creation
-        return ResponseEntity.ok(registeredUser.getId() + " successfully created.");
     }
 
     @GetMapping("refresh-access-token")
@@ -148,6 +167,14 @@ public class AuthController {
         try {
             Account authenticatedUser = authenticationService.authenticate(loginUserDto);
             User account = (User) authenticatedUser;
+
+            // check for email verification
+            if (!account.getEmailVerified()) {
+                // auto generate new email verification 
+
+                // return response to tell user to verify their email
+                return new ResponseEntity<>("Email not verified.", HttpStatus.valueOf(403));
+            } 
 
             // creates new access token
             String accessToken = jwtService.generateAccessToken(authenticatedUser);

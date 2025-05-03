@@ -85,6 +85,7 @@ public class AccountServiceImplementation implements AccountService {
         return new UserDto(
                 account.getId(),
                 account.getEmail(),
+                account.getEmailVerified(),
                 ((User) account).getDisplayName(),
                 ((User) account).getIdentifierCode(),
                 "USER",
@@ -99,6 +100,16 @@ public class AccountServiceImplementation implements AccountService {
                 ((User) account).getRedditLink(),
                 ((User) account).getPersonalEmailLink(),
                 ((User) account).getPersonalWebsiteLink());
+    }
+
+    @Override
+    public void verifyAccountEmail(Account user) throws Exception {
+        Optional<Account> foundAccount = accountRepository.findById(new ObjectId(user.getId()));
+
+        if (foundAccount.isEmpty()) throw new Exception("User Not Found."); 
+
+        foundAccount.get().setEmailVerified(true);
+        accountRepository.save(foundAccount.get()); 
     }
 
     @Override
@@ -122,6 +133,11 @@ public class AccountServiceImplementation implements AccountService {
         Account currentAccount = (Account) authentication.getPrincipal();
 
         return convertAccountToDto(currentAccount);
+    }
+
+    @Override
+    public Account getAccountByEmail(String userEmail) throws Exception {
+        return accountRepository.findAccountByEmail(userEmail).get(); 
     }
 
     @Override

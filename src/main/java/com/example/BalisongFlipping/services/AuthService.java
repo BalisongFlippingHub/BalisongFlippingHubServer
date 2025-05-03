@@ -8,6 +8,7 @@ public interface AuthService {
 
     boolean validateNewUser(RegisterAccountDto newUser);
 
-    Account signup(RegisterAccountDto newUser);
+    Account signup(RegisterAccountDto newUser) throws Exception;
     Account authenticate(LoginAccountDto loginInfo);
+    Boolean validateEmailVerification(String emailToken) throws Exception; 
 }

@@ -18,10 +18,13 @@ public interface AccountService {
             final String accountId) throws Exception;
 
     UserDto getSelf() throws Exception;
+    Account getAccountByEmail(String userEmail) throws Exception; 
 
     List<Account> allUsers();
 
     Boolean checkForAccountExistance(final String accountId) throws Exception;
+
+    void verifyAccountEmail(Account user) throws Exception; 
 
     // methods to update social media links
     String updateFacebookLink(final String newLink, final String accountId) throws Exception;

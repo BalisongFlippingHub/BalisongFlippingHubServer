@@ -73,7 +73,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (userEmail != null && authentication == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-                // check if access token is valid
+                // check if access token is valid, if not exception is thrown
                 if (jwtService.isAccessTokenValid(accessToken, userDetails)) {
                     System.out.println("Token is valid.");
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -90,7 +90,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             // check if caught exception is jwt expired exception
             if (exception instanceof io.jsonwebtoken.ExpiredJwtException) {
-                // check for refresh token
+                // check for refresh token and verify to refresh access token
                 Cookie[] cookies = request.getCookies();
 
                 if (cookies.length != 0) {

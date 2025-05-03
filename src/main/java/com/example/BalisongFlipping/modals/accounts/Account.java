@@ -2,7 +2,6 @@ package com.example.BalisongFlipping.modals.accounts;
 
 
 import lombok.*;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -26,6 +25,7 @@ public class Account implements UserDetails {
     // constructors
     public Account(String email, String password) {
         this.email = email;
+        this.emailVerified = false;
         this.password = password;
         accountCreationDate = new Date();
         lastLogin = new Date();
@@ -44,6 +44,8 @@ public class Account implements UserDetails {
     private String password;
     private Date accountCreationDate;
     private Date lastLogin;
+
+    private Boolean emailVerified; 
 
     private List<String> posts;
 

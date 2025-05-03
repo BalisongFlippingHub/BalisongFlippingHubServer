@@ -13,10 +13,12 @@ import com.example.BalisongFlipping.dtos.RegisterAccountDto;
 import com.example.BalisongFlipping.modals.accounts.Account;
 import com.example.BalisongFlipping.modals.accounts.User;
 import com.example.BalisongFlipping.modals.collections.Collection;
+import com.example.BalisongFlipping.modals.tokens.EmailVerificationToken;
 import com.example.BalisongFlipping.repositories.AccountRepository;
 import com.example.BalisongFlipping.repositories.CollectionRepository;
 import com.example.BalisongFlipping.services.AccountService;
 import com.example.BalisongFlipping.services.AuthService;
+import com.example.BalisongFlipping.services.EmailService;
 
 @Service
 public class AuthServiceImplementation implements AuthService {
@@ -26,6 +28,9 @@ public class AuthServiceImplementation implements AuthService {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private EmailService emailService;
 
     // object for password encoder
     private final PasswordEncoder passwordEncoder;
@@ -72,6 +77,16 @@ public class AuthServiceImplementation implements AuthService {
                 accountService.generateIdentifierCode(newUser.displayName()));
     }
 
+    private void sendEmailVerification(String userEmail) throws Exception {
+        EmailVerificationToken token = emailService.createNewEmailVerificationToken(userEmail); 
+        emailService.sendEmail(userEmail, "Email Verification", "Your verification code is\n -> " + token.getToken() + " <-");
+    }
+
+    @Override
+    public Boolean validateEmailVerification(String emailToken) throws Exception {
+        return emailService.validateEmailTokenVerification(emailToken); 
+    }   
+
     /***
      *
      * @param newUser Object container registration info
@@ -111,7 +126,7 @@ public class AuthServiceImplementation implements AuthService {
      *         create a new account in the db
      */
     @Override
-    public Account signup(RegisterAccountDto newUser) {
+    public Account signup(RegisterAccountDto newUser)  throws Exception {
         // check for account containing passed email already existing
         Optional<Account> holder = accountRepository.findAccountByEmail(newUser.email());
         if (holder.isPresent()) {
@@ -126,6 +141,9 @@ public class AuthServiceImplementation implements AuthService {
 
         // update new user with collection id
         u.setCollectionId(c.getId());
+
+        // send email verification to user
+        sendEmailVerification(u.getEmail());
 
         // save and return new user in db
         return accountRepository.save(u);

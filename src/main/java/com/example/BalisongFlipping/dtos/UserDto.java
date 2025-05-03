@@ -1,11 +1,12 @@
 package com.example.BalisongFlipping.dtos;
 
-import java.util.List;
+
 
 public record UserDto(
         // user account info
         String id,
         String email,
+        Boolean emailVerified,
         String displayName,
         String identifierCode,
         String role,
