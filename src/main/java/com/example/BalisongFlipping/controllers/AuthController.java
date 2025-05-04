@@ -48,6 +48,12 @@ public class AuthController {
         return ResponseEntity.ok("token valid");
     }
 
+    @GetMapping("/resend-email-token")
+    public ResponseEntity<?> resendEmailToken(@RequestParam("email") String email) throws Exception {
+        authenticationService.reSendEmailToken(email);
+        return new ResponseEntity<>("Success", HttpStatus.valueOf(200)); 
+    }
+
     @GetMapping("/verify-email-token/{token}")
     public ResponseEntity<?> verifyEmailToken(@PathVariable String token) throws Exception {
 

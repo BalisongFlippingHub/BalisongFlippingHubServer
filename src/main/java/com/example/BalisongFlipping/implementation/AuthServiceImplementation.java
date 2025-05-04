@@ -83,6 +83,12 @@ public class AuthServiceImplementation implements AuthService {
     }
 
     @Override
+    public void reSendEmailToken(String email) throws Exception {
+        EmailVerificationToken newToken = emailService.createReplacementEmailVerificationToken(email); 
+        emailService.sendEmail(email, "Email Verification", "Your verification code is\n -> " + newToken.getToken() + " <-");
+    }
+
+    @Override
     public Boolean validateEmailVerification(String emailToken) throws Exception {
         return emailService.validateEmailTokenVerification(emailToken); 
     }   

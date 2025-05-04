@@ -11,4 +11,5 @@ public interface AuthService {
     Account signup(RegisterAccountDto newUser) throws Exception;
     Account authenticate(LoginAccountDto loginInfo);
     Boolean validateEmailVerification(String emailToken) throws Exception; 
+    void reSendEmailToken(String email) throws Exception;
 }
